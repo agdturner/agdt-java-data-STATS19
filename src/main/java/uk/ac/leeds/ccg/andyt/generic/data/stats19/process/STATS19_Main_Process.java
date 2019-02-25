@@ -15,26 +15,15 @@
  */
 package uk.ac.leeds.ccg.andyt.generic.data.stats19.process;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Environment;
-import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Strings;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Object;
-import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Collection;
-import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Combined_Record;
+import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Strings;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Data;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Casualty_Handler;
-import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Accident_Handler;
 
 /**
  *
@@ -44,15 +33,13 @@ public class STATS19_Main_Process extends STATS19_Object {
 
     // For convenience
     protected final STATS19_Data data;
-    protected final STATS19_Strings Strings;
-    protected final STATS19_Files Files;
+    protected final STATS19_Files files;
 
 
     public STATS19_Main_Process(STATS19_Environment env) {
         super(env);
         data = env.data;
-        Strings = env.Strings;
-        Files = env.Files;
+        files = env.files;
     }
 
     public static void main(String[] args) {
@@ -68,7 +55,7 @@ public class STATS19_Main_Process extends STATS19_Object {
     }
 
     public void run() {
-        Env.logF0 = new File(Files.getOutputDataDir(), "log0.txt");
+        Env.logF0 = new File(files.getOutputDataDir(), "log0.txt");
         STATS19_Environment.logPW0 = Generic_IO.getPrintWriter(Env.logF0, false); // Overwrite log file.
 
         if (doJavaCodeGeneration) {
@@ -80,9 +67,9 @@ public class STATS19_Main_Process extends STATS19_Object {
         File generateddir;
         STATS19_Casualty_Handler hholdHandler;
 
-        indir = Files.getSTATS19InputDir();
-        generateddir = Files.getGeneratedSTATS19Dir();
-        outdir = new File(generateddir, "Subsets");
+        indir = files.getSTATS19InputDir();
+        generateddir = files.getGeneratedSTATS19Dir();
+        outdir = new File(generateddir, STATS19_Strings.s_Subsets);
         outdir.mkdirs();
         hholdHandler = new STATS19_Casualty_Handler(Env, indir);
 

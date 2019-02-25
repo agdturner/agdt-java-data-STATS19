@@ -36,7 +36,7 @@ public class STATS19_Casualty_Handler extends STATS19_Handler {
 
     public STATS19_Casualty_Handler(STATS19_Environment e, File indir) {
         super(e);
-        TYPE = "hhold";
+        TYPE = STATS19_Strings.s_casualty;
         INDIR = indir;
     }
 
@@ -74,8 +74,8 @@ public class STATS19_Casualty_Handler extends STATS19_Handler {
         File r;
         File dir;
         dir = Files.getGeneratedSTATS19Dir();
-        dir = new File(dir, "Subsets");
-        r = new File(dir, TYPE + wave + "." + Strings.S_dat);
+        dir = new File(dir, STATS19_Strings.s_Subsets);
+        r = new File(dir, TYPE + wave + "." + STATS19_Strings.s_dat);
         return r;
     }
 

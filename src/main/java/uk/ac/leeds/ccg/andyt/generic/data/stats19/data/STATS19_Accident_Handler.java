@@ -21,17 +21,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Environment;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
-import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Strings;
-import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
 
 /**
  *
@@ -41,13 +36,13 @@ public class STATS19_Accident_Handler extends STATS19_Handler {
 
     public STATS19_Accident_Handler(STATS19_Environment e, File indir) {
         super(e);
-        TYPE = "person";
+        TYPE = STATS19_Strings.s_person;
         INDIR = indir;
     }
 
     protected File getFile(File dir, byte wave) {
         File f;
-        f = new File(dir, "person" + wave + ".dat");
+        f = new File(dir, STATS19_Strings.s_person + wave + ".dat");
         return f;
     }
 
@@ -65,7 +60,7 @@ public class STATS19_Accident_Handler extends STATS19_Handler {
             int nOC, byte wave, File outdir) {
         for (short cID = 0; cID < nOC; cID++) {
             File f;
-            f = new File(outdir, "person" + wave + "_" + cID + ".tab");
+            f = new File(outdir, STATS19_Strings.s_person + wave + "_" + cID + ".tab");
             cPWs.put(cID, Generic_IO.getPrintWriter(f, false));
             cFs.put(cID, f);
         }
@@ -84,8 +79,7 @@ public class STATS19_Accident_Handler extends STATS19_Handler {
         try {
             String header;
             header = br.readLine();
-            CPWs.keySet().stream()
-                    .forEach(collectionID -> {
+            CPWs.keySet().stream()                    .forEach(collectionID -> {
                         PrintWriter pw;
                         pw = CPWs.get(collectionID);
                         pw.println(header);
@@ -102,8 +96,7 @@ public class STATS19_Accident_Handler extends STATS19_Handler {
      * @param cPWs
      */
     protected void closePrintWriters(HashMap<Short, PrintWriter> cPWs) {
-        cPWs.keySet().stream()
-                .forEach(collectionID -> {
+        cPWs.keySet().stream()                .forEach(collectionID -> {
                     PrintWriter pw;
                     pw = cPWs.get(collectionID);
                     pw.close();
@@ -145,9 +138,9 @@ public class STATS19_Accident_Handler extends STATS19_Handler {
         Object[] r;
         File dir;
         dir = Files.getGeneratedSTATS19Dir();
-        dir = new File(dir, "Subsets");
+        dir = new File(dir, STATS19_Strings.s_Subsets);
         File f;
-        f = new File(dir, TYPE + wave + "." + Strings.S_dat);
+        f = new File(dir, TYPE + wave + "." + STATS19_Strings.s_dat);
         if (f.exists()) {
             r = (Object[]) Generic_IO.readObject(f);
         } else {

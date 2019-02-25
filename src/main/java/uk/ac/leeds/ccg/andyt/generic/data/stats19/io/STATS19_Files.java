@@ -30,27 +30,21 @@ public class STATS19_Files extends Generic_Files implements Serializable {
      *
      * @param s
      */
-    public STATS19_Files(STATS19_Strings s) {
-        super(s);
+    public STATS19_Files() {
+        super();
     }
 
     /**
      *
-     * @param s
      * @param dataDir
      */
-    public STATS19_Files(STATS19_Strings s, File dataDir) {
-        super(s, dataDir);
-    }
-
-    @Override
-    public STATS19_Strings getStrings(){
-        return (STATS19_Strings) strings;
+    public STATS19_Files(File dataDir) {
+        super(dataDir);
     }
 
     public File getSTATS19InputDir() {
         File r;
-        r = new File(getInputDataDir(), "STATS19");
+        r = new File(getInputDataDir(), STATS19_Strings.s_STATS19);
         return r;
     }
 
@@ -58,7 +52,7 @@ public class STATS19_Files extends Generic_Files implements Serializable {
         File dir;
         dir = getGeneratedDataDir();
         File f;
-        f = new File(dir, "STATS19");
+        f = new File(dir, STATS19_Strings.s_STATS19);
         f.mkdirs();
         return f;
     }

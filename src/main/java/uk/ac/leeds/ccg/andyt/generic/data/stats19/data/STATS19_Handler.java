@@ -26,7 +26,6 @@ import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Object;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Strings;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
-import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 
 /**
  *
@@ -35,14 +34,12 @@ import uk.ac.leeds.ccg.andyt.generic.util.Generic_Collections;
 public abstract class STATS19_Handler extends STATS19_Object {
 
     public transient STATS19_Files Files;
-    public transient STATS19_Strings Strings;
     protected String TYPE;
     protected File INDIR;
 
     public STATS19_Handler(STATS19_Environment e) {
         super(e);
-        Files = e.Files;
-        Strings = e.Strings;
+        Files = e.files;
     }
 
     public File getInputFile(byte wave) {
@@ -81,7 +78,7 @@ public abstract class STATS19_Handler extends STATS19_Object {
 
     public void cacheSubset(byte wave, Object o) {
         File f = new File(Files.getGeneratedSTATS19SubsetsDir(),
-                TYPE + wave + "." + Strings.S_dat);
+                TYPE + wave + "." + STATS19_Strings.s_dat);
         cache(wave, f, o);
     }
 
@@ -89,17 +86,17 @@ public abstract class STATS19_Handler extends STATS19_Object {
             TreeMap<Short, Short> m1) {
         File f;
         f = new File(Files.getGeneratedSTATS19SubsetsDir(),
-                TYPE + wave + "To" + (wave + 1) + "." + Strings.S_dat);
+                TYPE + wave + "To" + (wave + 1) + "." + STATS19_Strings.s_dat);
         cache(wave, f, m0);
         f = new File(Files.getGeneratedSTATS19SubsetsDir(),
-                TYPE + (wave + 1) + "To" + wave + "." + Strings.S_dat);
+                TYPE + (wave + 1) + "To" + wave + "." + STATS19_Strings.s_dat);
         cache(wave, f, m1);
     }
 
     public void cacheSubsetCollection(short cID, byte wave, Object o) {
         File f;
         f = new File(Files.getGeneratedSTATS19SubsetsDir(),
-                getString1(wave, cID) + "." + Strings.S_dat);
+                getString1(wave, cID) + "." + STATS19_Strings.s_dat);
         STATS19_Handler.this.cache(wave, f, o);
     }
 
@@ -114,12 +111,12 @@ public abstract class STATS19_Handler extends STATS19_Object {
         TreeMap<Short, Short> m1;
         File f;
         f = new File(Files.getGeneratedSTATS19SubsetsDir(),
-                TYPE + wave + "To" + (wave + 1) + "." + Strings.S_dat);
+                TYPE + wave + "To" + (wave + 1) + "." + STATS19_Strings.s_dat);
         m0 = (TreeMap<Short, HashSet<Short>>) Generic_IO.readObject(f);
         r[0] = m0;
         cache(wave, f, m0);
         f = new File(Files.getGeneratedSTATS19SubsetsDir(),
-                TYPE + (wave + 1) + "To" + wave + "." + Strings.S_dat);
+                TYPE + (wave + 1) + "To" + wave + "." + STATS19_Strings.s_dat);
         m1 = (TreeMap<Short, Short>) Generic_IO.readObject(f);
         r[1] = m1;
         return r;
@@ -129,7 +126,7 @@ public abstract class STATS19_Handler extends STATS19_Object {
         Object r;
         File f;
         f = new File(Files.getGeneratedSTATS19SubsetsDir(),
-                getString1(wave, cID) + "." + Strings.S_dat);
+                getString1(wave, cID) + "." + STATS19_Strings.s_dat);
         r = load(wave, f);
         return r;
     }

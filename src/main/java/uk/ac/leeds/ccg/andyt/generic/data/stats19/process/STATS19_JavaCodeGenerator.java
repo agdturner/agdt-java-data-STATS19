@@ -44,289 +44,55 @@ import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Object;
  *
  * @author Andy Turner
  */
-public class STATS19_JavaCodeGenerator extends STATS19_Object {
+public class STATS19_JavaCodeGenerator extends Data_VariableType {
 
     private static final long serialVersionUID = 1L;
 
-    // For convenience
-    public STATS19_Strings Strings;
-    public STATS19_Files Files;
-
-    private String delimeter;
-
-    protected STATS19_JavaCodeGenerator() {
-        super();
-        Strings = Env.Strings;
-        Files = Env.Files;
-    }
-
-    public STATS19_JavaCodeGenerator(STATS19_Environment env) {
+    public STATS19_JavaCodeGenerator(Generic_Environment env) {
         super(env);
-        Strings = Env.Strings;
-        Files = Env.Files;
     }
 
     public static void main(String[] args) {
         STATS19_JavaCodeGenerator p;
-        p = new STATS19_JavaCodeGenerator(new STATS19_Environment(
-                new Generic_Environment()));
-        p.delimeter = ",";
+        p = new STATS19_JavaCodeGenerator(new Generic_Environment());
+        p.run();
+    }
+    
+    public void run() {
+        delimiter = ",";
         String type;
         Object[] t;
 
-        type = "accident";
-        t = p.getFieldTypes(type);
-        p.run(type, t);
-
-        type = "casualty";
-        t = p.getFieldTypes(type);
-        p.run(type, t);
-
-        type = "vehicle";
-        t = p.getFieldTypes(type);
-        p.run(type, t);
-    }
-
-    /**
-     * Pass through the data and works out what numeric type is best to store
-     * each field in the data.
-     *
-     * @param type
-     * @return .
-     */
-    protected Object[] getFieldTypes(String type) {
-        Object[] r;
         /**
-         * The number of decimal places a value has to be correct to if it is a
-         * floating point type.
+         * 
          */
         int dp = 5;
-        r = loadTest(type, Files.getInputDataDir(), dp);
-        HashMap<String, Integer> fieldTypes;
-        fieldTypes = new HashMap<>();
-        String[] fields;
-        /**
-         * True indicates that a value of a field can be stored as a string, but
-         * not a BigDecimal.
-         */
-        boolean[] strings;
-        /**
-         * True indicates that a value of a field can be stored as a BigDecimal.
-         */
-        boolean[] bigDecimals;
-        /**
-         * True indicates that a value of a field can be stored as a double.
-         */
-        boolean[] doubles;
-        /**
-         * True indicates that a value of a field can be stored as a float.
-         */
-        boolean[] floats;
-        /**
-         * True indicates that a value of a field can be stored as a BigInteger.
-         */
-        boolean[] bigIntegers;
-        /**
-         * True indicates that a value of a field can be stored as a long.
-         */
-        boolean[] longs;
-        /**
-         * True indicates that a value of a field can be stored as a int.
-         */
-        boolean[] ints;
-        /**
-         * True indicates that a value of a field can be stored as a short.
-         */
-        boolean[] shorts;
-        /**
-         * True indicates that a value of a field can be stored as a byte.
-         */
-        boolean[] bytes;
-        fields = (String[]) r[0];
-        strings = (boolean[]) r[1];
-        bigDecimals = (boolean[]) r[2];
-        doubles = (boolean[]) r[3];
-        floats = (boolean[]) r[4];
-        bigIntegers = (boolean[]) r[5];
-        longs = (boolean[]) r[6];
-        ints = (boolean[]) r[7];
-        shorts = (boolean[]) r[8];
-        bytes = (boolean[]) r[9];
-        String field;
-        for (int i = 0; i < strings.length; i++) {
-            field = fields[i];
-            if (strings[i]) {
-                System.out.println("" + i + " " + "String");
-                fieldTypes.put(field, 0);
-            } else {
-                if (bigDecimals[i]) {
-                    System.out.println("" + i + " " + "BigDecimal");
-                    fieldTypes.put(field, 1);
-                } else {
-                    if (doubles[i]) {
-                        System.out.println("" + i + " " + "double");
-                        fieldTypes.put(field, 2);
-                    } else {
-                        if (floats[i]) {
-                            System.out.println("" + i + " " + "float");
-                            fieldTypes.put(field, 3);
-                        } else {
-                            if (bigIntegers[i]) {
-                                System.out.println("" + i + " " + "BigInteger");
-                                fieldTypes.put(field, 4);
-                            } else {
-                                if (longs[i]) {
-                                    System.out.println("" + i + " " + "long");
-                                    fieldTypes.put(field, 5);
-                                } else {
-                                    if (ints[i]) {
-                                        System.out.println("" + i + " " + "int");
-                                        fieldTypes.put(field, 6);
-                                    } else {
-                                        if (shorts[i]) {
-                                            System.out.println("" + i + " " + "short");
-                                            fieldTypes.put(field, 7);
-                                        } else {
-                                            if (bytes[i]) {
-                                                System.out.println("" + i + " " + "byte");
-                                                fieldTypes.put(field, 8);
-                                            } else {
-                                                try {
-                                                    throw new Exception("unrecognised type");
-                                                } catch (Exception ex) {
-                                                    ex.printStackTrace(System.err);
-                                                    Logger.getLogger(STATS19_JavaCodeGenerator.class.getName()).log(Level.SEVERE, null, ex);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return r;
-    }
+        
+        File[] fs;
+        fs = new File[2];
+        File indir = files.getInputDataDir();
+        fs[0] = new File(new File(indir, "dftRoadSafetyData_Accidents_2017"), "acc.csv");
+        fs[1] = new File(new File(indir, "dftRoadSafety_Accidents_2016"), "dftRoadSafety_Accidents_2016.csv");
+        t = getFieldTypes(fs, dp);
+        type = "accident";
+        run(type, t);
 
-    /**
-     *
-     * @param TYPE
-     * @param indir
-     * @param dp
-     * @return
-     */
-    public Object[] loadTest(String TYPE, File indir, int dp) {
-        Object[] r;
-        r = new Object[10];
-        String[] fields;
-        /**
-         * True indicates that a value of a field can be stored as a string, but
-         * not a BigDecimal.
-         */
-        boolean[] strings;
-        /**
-         * True indicates that a value of a field can be stored as a BigDecimal.
-         */
-        boolean[] bigDecimals;
-        /**
-         * True indicates that a value of a field can be stored as a double.
-         */
-        boolean[] doubles;
-        /**
-         * True indicates that a value of a field can be stored as a float.
-         */
-        boolean[] floats;
-        /**
-         * True indicates that a value of a field can be stored as a BigInteger.
-         */
-        boolean[] bigIntegers;
-        /**
-         * True indicates that a value of a field can be stored as a long.
-         */
-        boolean[] longs;
-        /**
-         * True indicates that a value of a field can be stored as a int.
-         */
-        boolean[] ints;
-        /**
-         * True indicates that a value of a field can be stored as a short.
-         */
-        boolean[] shorts;
-        /**
-         * True indicates that a value of a field can be stored as a byte.
-         */
-        boolean[] bytes;
-
-        File f;
-        f = getInputFile(TYPE, indir);
-        System.out.println("<Test load " + TYPE + " STATS19 "
-                + "data from " + f + ">");
-        BufferedReader br;
-        br = Generic_IO.getBufferedReader(f);
-        String line;
-        int n;
-        line = br.lines().findFirst().get();
-        fields = parseHeader(line);
-        n = fields.length;
-        strings = new boolean[n];
-        bigDecimals = new boolean[n];
-        doubles = new boolean[n];
-        floats = new boolean[n];
-        bigIntegers = new boolean[n];
-        longs = new boolean[n];
-        ints = new boolean[n];
-        shorts = new boolean[n];
-        bytes = new boolean[n];
-
-        for (int i = 0; i < n; i++) {
-            strings[i] = false;
-            bigDecimals[i] = false;
-            doubles[i] = false;
-            floats[i] = false;
-            bigIntegers[i] = false;
-            longs[i] = false;
-            ints[i] = false;
-            shorts[i] = false;
-            bytes[i] = true;
-        }
-        br.lines().skip(1).forEach(l -> {
-            String[] split = l.split(delimeter);
-            // split.length is used here instead of n as for some accident 
-            // records the LSOA detail is not included!
-            for (int i = 0; i < split.length; i++) {
-                Data_VariableType.parse(split[i], i, dp, strings, bigDecimals,
-                        doubles, floats, bigIntegers, longs, ints, shorts,
-                        bytes);
-            }
-        });
-        System.out.println("</Loading " + TYPE + " STATS19 " + "data from " + f + ">");
-        r[0] = fields;
-        r[1] = strings;
-        r[2] = bigDecimals;
-        r[3] = doubles;
-        r[4] = floats;
-        r[5] = bigIntegers;
-        r[6] = longs;
-        r[7] = ints;
-        r[8] = shorts;
-        r[9] = bytes;
-        return r;
-    }
-
-    public File getInputFile(String type, File indir) {
-        File f;
-        File dir = new File(indir, "dftRoadSafetyData_Accidents_2017");
-        f = new File(dir, "acc.csv");
-        return f;
+//        type = "casualty";
+//        f = getInputFile(type, files.getInputDataDir());
+//        t = getFieldTypes(f, dp);
+//        run(type, t);
+//
+//        type = "vehicle";
+//        f = getInputFile(type, files.getInputDataDir());
+//        t = getFieldTypes(f, dp);
+//        run(type, t);
     }
 
     public void run(String type, Object[] types) {
         String[] fields;
         fields = (String[]) types[0];
         File outdir;
-        outdir = new File(Files.getDataDir(), "..");
+        outdir = new File(files.getDataDir(), "..");
         outdir = new File(outdir, "src");
         outdir = new File(outdir, "main");
         outdir = new File(outdir, "java");
@@ -581,19 +347,7 @@ public class STATS19_JavaCodeGenerator extends STATS19_Object {
         }
     }
 
-    /**
-     * Thinking to returns a lists of IDs...
-     *
-     * @param header
-     * @return
-     */
-    public String[] parseHeader(String header) {
-        String[] r;
-        String h1;
-        h1 = header.toUpperCase();
-        r = h1.split(delimeter);
-        return r;
-    }
+    
 
     protected HashMap<String, Byte> setCommonBooleanMaps(
             HashMap<String, Byte>[] v0ms,

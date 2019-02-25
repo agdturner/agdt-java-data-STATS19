@@ -16,14 +16,12 @@
 package uk.ac.leeds.ccg.andyt.generic.data.stats19.data;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Environment;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Object;
-import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Strings;
-import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
+import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
 
 /**
  *
@@ -101,8 +99,8 @@ public class STATS19_Data extends STATS19_Object {
      */
     public void cacheSubsetCollection(short cID, Object o) {
         File f;
-        f = new File(Env.Files.getGeneratedSTATS19SubsetsDir(),
-                "STATS19_" + cID + "." + Env.Strings.S_dat);
+        f = new File(Env.files.getGeneratedSTATS19SubsetsDir(),
+                "STATS19_" + cID + "." + STATS19_Strings.s_dat);
         cache(f, o);
     }
 
@@ -114,8 +112,8 @@ public class STATS19_Data extends STATS19_Object {
     public Object loadSubsetCollection(short cID) {
         Object r;
         File f;
-        f = new File(Env.Files.getGeneratedSTATS19SubsetsDir(),
-                "STATS19_" + cID + "." + Env.Strings.S_dat);
+        f = new File(Env.files.getGeneratedSTATS19SubsetsDir(),
+                "STATS19_" + cID + "." + STATS19_Strings.s_dat);
         r = load(f);
         return r;
     }

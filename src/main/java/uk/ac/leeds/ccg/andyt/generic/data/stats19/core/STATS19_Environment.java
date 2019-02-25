@@ -61,15 +61,13 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
     public static void log0(String s) {
         logPW.println(s);
     }
-
-    public transient Generic_Environment ge;
-    public transient STATS19_Strings Strings;
-    public transient STATS19_Files Files;
     
     /**
      * Data.
      */
     public STATS19_Data data;
+    public STATS19_Files files;
+    
 
     public transient static final String EOL = System.getProperty("line.separator");
     public File logF0;
@@ -78,17 +76,16 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
 
     public STATS19_Environment(Generic_Environment ge) {
         //Memory_Threshold = 3000000000L;
-        Strings = new STATS19_Strings();
-        Files = new STATS19_Files(Strings, ge.getFiles().getDataDir());
+        files = new STATS19_Files(ge.getFiles().getDataDir());
         File f;
-        f = Files.getEnvDataFile();
+        f = files.getEnvDataFile();
         if (f.exists()) {
             loadData();
         } else {
             data = new STATS19_Data(this);
         }
         initlog(1);
-        hh = new STATS19_Casualty_Handler(this, Files.getInputDataDir());
+        hh = new STATS19_Casualty_Handler(this, files.getInputDataDir());
     }
 
     /**
@@ -160,7 +157,7 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
     
     public void cacheData() {
         File f;
-        f = Files.getEnvDataFile();
+        f = files.getEnvDataFile();
         System.out.println("<cache data>");
         Generic_IO.writeObject(data, f);
         System.out.println("</cache data>");
@@ -168,14 +165,14 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
 
     public final void loadData() {
         File f;
-        f = Files.getEnvDataFile();
+        f = files.getEnvDataFile();
         System.out.println("<load data>");
         data = (STATS19_Data) Generic_IO.readObject(f);
         System.out.println("<load data>");
     }
 
     public final void initlog(int i) {
-        logF = new File(Files.getOutputDataDir(), "log" + i + ".txt");
+        logF = new File(files.getOutputDataDir(), "log" + i + ".txt");
         logPW = Generic_IO.getPrintWriter(logF, true); // Append to log file.
     }
 }
