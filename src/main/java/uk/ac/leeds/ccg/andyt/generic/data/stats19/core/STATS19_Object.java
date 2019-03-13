@@ -22,18 +22,12 @@ import java.io.Serializable;
  */
 public abstract class STATS19_Object implements Serializable {
 
-    /**
-     * A reference to LR_Environment
-     */
-    public transient STATS19_Environment Env;
+    public transient STATS19_Environment env;
 
-//    public LR_Object(){
-//        Env = new LR_Environment();
-//    }
     protected STATS19_Object() {
     }
 
     public STATS19_Object(STATS19_Environment e) {
-        Env = e;
+        env = e;
     }
 }

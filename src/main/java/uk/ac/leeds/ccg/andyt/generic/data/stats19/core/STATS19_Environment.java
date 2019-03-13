@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
-//import uk.ac.leeds.ccg.andyt.data.postcode.Generic_UKPostcode_Handler;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Data;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Casualty_Handler;
@@ -32,60 +31,25 @@ import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
 public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
         implements Serializable {
 
-    public final STATS19_Casualty_Handler hh;
-    
-    public static transient PrintWriter logPW;
-    public static transient PrintWriter logPW0;
-
-    public static void log(String s) {
-        logPW.println(s);
-        System.out.println(s);
-    }
-
-    public static void logEnd(String s) {
-        s = "</" + s + ">";
-        logPW.println(s);
-        System.out.println(s);
-    }
-
-    public static void log1(String s) {
-        System.out.println(s);
-    }
-
-    public static void logStart(String s) {
-        s = "<" + s + ">";
-        logPW.println(s);
-        System.out.println(s);
-    }
-
-    public static void log0(String s) {
-        logPW.println(s);
-    }
-    
-    /**
-     * Data.
-     */
+    protected Generic_Environment ge;
+    protected int logID;
+    public final STATS19_Casualty_Handler ch;
     public STATS19_Data data;
     public STATS19_Files files;
     
-
     public transient static final String EOL = System.getProperty("line.separator");
-    public File logF0;
-    // For logging.
-    File logF;
-
+    
     public STATS19_Environment(Generic_Environment ge) {
         //Memory_Threshold = 3000000000L;
         files = new STATS19_Files(ge.getFiles().getDataDir());
-        File f;
-        f = files.getEnvDataFile();
+        File f  = files.getEnvDataFile();
         if (f.exists()) {
             loadData();
         } else {
             data = new STATS19_Data(this);
         }
-        initlog(1);
-        hh = new STATS19_Casualty_Handler(this, files.getInputDataDir());
+        initLog(STATS19_Strings.s_STATS19);
+        ch = new STATS19_Casualty_Handler(this, files.getInputDataDir());
     }
 
     /**
@@ -108,18 +72,23 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
         return true;
     }
 
+    /**
+     * 
+     * @param hoome handleOutOfMemoryError
+     * @return 
+     */
     @Override
-    public boolean swapDataAny(boolean handleOutOfMemoryError) {
+    public boolean swapDataAny(boolean hoome) {
         try {
-            boolean result = swapDataAny();
+            boolean r = swapDataAny();
             checkAndMaybeFreeMemory();
-            return result;
+            return r;
         } catch (OutOfMemoryError e) {
-            if (handleOutOfMemoryError) {
+            if (hoome) {
                 clearMemoryReserve();
-                boolean result = swapDataAny(HOOMEF);
+                boolean r = swapDataAny(HOOMEF);
                 initMemoryReserve();
-                return result;
+                return r;
             } else {
                 throw e;
             }
@@ -133,8 +102,7 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
      */
     @Override
     public boolean swapDataAny() {
-        boolean r;
-        r = clearSomeData();
+        boolean r = clearSomeData();
         if (r) {
             return r;
         } else {
@@ -150,29 +118,42 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
     }
 
     public int clearAllData() {
-        int r;
-        r = data.clearAllData();
-        return r;
+        return data.clearAllData();
     }
     
     public void cacheData() {
-        File f;
-        f = files.getEnvDataFile();
-        System.out.println("<cache data>");
+        File f = files.getEnvDataFile();
+        String m = "cacheData(File " + f + ")";
+        logStartTag(m);
         Generic_IO.writeObject(data, f);
-        System.out.println("</cache data>");
+        logEndTag(m);
     }
 
     public final void loadData() {
-        File f;
-        f = files.getEnvDataFile();
-        System.out.println("<load data>");
+        File f = files.getEnvDataFile();
+        String m = "loadData(File " + f + ")";
+        logStartTag(m);
         data = (STATS19_Data) Generic_IO.readObject(f);
-        System.out.println("<load data>");
+        logEndTag(m);
     }
 
-    public final void initlog(int i) {
-        logF = new File(files.getOutputDataDir(), "log" + i + ".txt");
-        logPW = Generic_IO.getPrintWriter(logF, true); // Append to log file.
+    public void log(String s) {
+        ge.log(s, logID);
+    }
+
+    public void logEndTag(String s) {
+        ge.logEndTag(s, logID);
+    }
+
+    public void logStartTag(String s) {
+        ge.logStartTag(s, logID);
+    }
+    
+    public final void initLog(String s) {
+        logID = ge.initLog(s);
+    }
+    
+    public final void closeLogs() {
+        ge.closeLog(logID);
     }
 }

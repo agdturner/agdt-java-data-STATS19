@@ -40,8 +40,7 @@ public class STATS19_Data extends STATS19_Object {
     public HashMap<Short, Short> CASEW1ToCID;
 
     public STATS19_Collection getCollection(short collectionID) {
-        STATS19_Collection r;
-        r = data.get(collectionID);
+        STATS19_Collection r = data.get(collectionID);
         if (r == null) {
             r = (STATS19_Collection) loadSubsetCollection(collectionID);
             data.put(collectionID, r);
@@ -50,7 +49,6 @@ public class STATS19_Data extends STATS19_Object {
     }
 
     public void clearCollection(short cID) {
-        STATS19_Collection c;
         data.put(cID, null);
     }
 
@@ -61,13 +59,10 @@ public class STATS19_Data extends STATS19_Object {
     }
 
     public boolean clearSomeData() {
-        Iterator<Short> ite;
-        ite = data.keySet().iterator();
-        short cID;
+        Iterator<Short> ite = data.keySet().iterator();
         while (ite.hasNext()) {
-            cID = ite.next();
-            STATS19_Collection c;
-            c = data.get(cID);
+            short cID = ite.next();
+            STATS19_Collection c = data.get(cID);
             cacheSubsetCollection(cID, c);
             data.put(cID, null);
             return true;
@@ -76,15 +71,11 @@ public class STATS19_Data extends STATS19_Object {
     }
 
     public int clearAllData() {
-        int r;
-        r = 0;
-        Iterator<Short> ite;
-        ite = data.keySet().iterator();
-        short cID;
+        int r = 0;
+        Iterator<Short> ite = data.keySet().iterator();
         while (ite.hasNext()) {
-            cID = ite.next();
-            STATS19_Collection c;
-            c = data.get(cID);
+            short cID = ite.next();
+            STATS19_Collection c = data.get(cID);
             cacheSubsetCollection(cID, c);
             data.put(cID, null);
             r++;
@@ -98,10 +89,13 @@ public class STATS19_Data extends STATS19_Object {
      * @param o the value of o
      */
     public void cacheSubsetCollection(short cID, Object o) {
-        File f;
-        f = new File(Env.files.getGeneratedSTATS19SubsetsDir(),
-                "STATS19_" + cID + "." + STATS19_Strings.s_dat);
-        cache(f, o);
+        cache(getSubsetCollection(cID), o);
+    }
+
+    public File getSubsetCollection(short cID) {
+        return new File(env.files.getGeneratedSTATS19SubsetsDir(),
+                STATS19_Strings.s_STATS19 + STATS19_Strings.symbol_underscore
+                + cID + STATS19_Strings.symbol_dot + STATS19_Strings.s_dat);
     }
 
     /**
@@ -110,12 +104,7 @@ public class STATS19_Data extends STATS19_Object {
      * @return
      */
     public Object loadSubsetCollection(short cID) {
-        Object r;
-        File f;
-        f = new File(Env.files.getGeneratedSTATS19SubsetsDir(),
-                "STATS19_" + cID + "." + STATS19_Strings.s_dat);
-        r = load(f);
-        return r;
+        return load(getSubsetCollection(cID));
     }
 
     /**
@@ -124,10 +113,10 @@ public class STATS19_Data extends STATS19_Object {
      * @return
      */
     protected Object load(File f) {
-        Object r;
-        STATS19_Environment.log1("<load File " + f + ">");
-        r = Generic_IO.readObject(f);
-        STATS19_Environment.log1("</load File " + f + ">");
+        String m = "load File " + f.toString();
+        env.logStartTag(m);
+        Object r = Generic_IO.readObject(f);
+        env.logEndTag(m);
         return r;
     }
 
@@ -137,9 +126,10 @@ public class STATS19_Data extends STATS19_Object {
      * @param o the value of o
      */
     protected void cache(File f, Object o) {
-        STATS19_Environment.log1("<cache File " + f + ">");
+        String m = "cache File " + f.toString();
+        env.logStartTag(m);
         Generic_IO.writeObject(o, f);
-        STATS19_Environment.log1("</cache File " + f + ">");
+        env.logEndTag(m);
     }
 
 }

@@ -89,8 +89,8 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
     }
 
     public void run(String type, Object[] types) {
-        String[] fields;
-        fields = (String[]) types[0];
+        HashMap<String, Integer> fields;
+        fields = (HashMap<String, Integer>) types[0];
         File outdir;
         outdir = new File(files.getDataDir(), "..");
         outdir = new File(outdir, "src");

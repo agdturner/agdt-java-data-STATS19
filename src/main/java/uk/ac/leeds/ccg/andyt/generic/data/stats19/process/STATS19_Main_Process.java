@@ -35,7 +35,6 @@ public class STATS19_Main_Process extends STATS19_Object {
     protected final STATS19_Data data;
     protected final STATS19_Files files;
 
-
     public STATS19_Main_Process(STATS19_Environment env) {
         super(env);
         data = env.data;
@@ -43,40 +42,30 @@ public class STATS19_Main_Process extends STATS19_Object {
     }
 
     public static void main(String[] args) {
-        Generic_Environment ge = new Generic_Environment();
-        STATS19_Main_Process p;
-        STATS19_Environment env;
-        env = new STATS19_Environment(ge);
-        p = new STATS19_Main_Process(env);
+        STATS19_Main_Process p = new STATS19_Main_Process(
+                new STATS19_Environment(new Generic_Environment()));
         // Main switches
         //p.doJavaCodeGeneration = true;
-        p.doLoadDataIntoCaches = true; // rename/reuse just left here for convenience...
+        //p.doLoadDataIntoCaches = true; // rename/reuse just left here for convenience...
         p.run();
     }
 
     public void run() {
-        Env.logF0 = new File(files.getOutputDataDir(), "log0.txt");
-        STATS19_Environment.logPW0 = Generic_IO.getPrintWriter(Env.logF0, false); // Overwrite log file.
-
+        env.initLog(STATS19_Strings.s_STATS19);
         if (doJavaCodeGeneration) {
             runJavaCodeGeneration();
         }
 
-        File indir;
-        File outdir;
-        File generateddir;
-        STATS19_Casualty_Handler hholdHandler;
-
-        indir = files.getSTATS19InputDir();
-        generateddir = files.getGeneratedSTATS19Dir();
-        outdir = new File(generateddir, STATS19_Strings.s_Subsets);
+        File indir = files.getSTATS19InputDir();
+        File generateddir = files.getGeneratedSTATS19Dir();
+        File outdir = new File(generateddir, STATS19_Strings.s_Subsets);
         outdir.mkdirs();
-        hholdHandler = new STATS19_Casualty_Handler(Env, indir);
+        STATS19_Casualty_Handler ch = new STATS19_Casualty_Handler(env, indir);
 
         int chunkSize;
         chunkSize = 256; //1024; 512; 256;
-        doDataProcessingStep1(indir, outdir, hholdHandler);
-        STATS19_Environment.logPW.close();
+        doDataProcessingStep1(indir, outdir, ch);
+        env.closeLogs();
     }
 
     /**
@@ -87,7 +76,6 @@ public class STATS19_Main_Process extends STATS19_Object {
         args = null;
         STATS19_JavaCodeGenerator.main(args);
     }
-
 
     /**
      * Read input data and create subsets. Organise for person records that each
@@ -100,9 +88,8 @@ public class STATS19_Main_Process extends STATS19_Object {
      */
     public void doDataProcessingStep1(File indir, File outdir,
             STATS19_Casualty_Handler hholdHandler) {
-        Env.initlog(1);
         // Add code here!
-        STATS19_Environment.logPW.close();
+        
     }
 
     boolean doJavaCodeGeneration = false;
