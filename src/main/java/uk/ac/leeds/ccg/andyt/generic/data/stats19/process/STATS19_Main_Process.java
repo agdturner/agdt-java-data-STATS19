@@ -17,7 +17,6 @@ package uk.ac.leeds.ccg.andyt.generic.data.stats19.process;
 
 import java.io.File;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Environment;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Object;
@@ -45,13 +44,14 @@ public class STATS19_Main_Process extends STATS19_Object {
         STATS19_Main_Process p = new STATS19_Main_Process(
                 new STATS19_Environment(new Generic_Environment()));
         // Main switches
-        //p.doJavaCodeGeneration = true;
+        p.doJavaCodeGeneration = true;
         //p.doLoadDataIntoCaches = true; // rename/reuse just left here for convenience...
         p.run();
     }
 
     public void run() {
-        env.initLog(STATS19_Strings.s_STATS19);
+        String m = "run";
+        env.logStartTag(m);
         if (doJavaCodeGeneration) {
             runJavaCodeGeneration();
         }
@@ -62,10 +62,10 @@ public class STATS19_Main_Process extends STATS19_Object {
         outdir.mkdirs();
         STATS19_Casualty_Handler ch = new STATS19_Casualty_Handler(env, indir);
 
-        int chunkSize;
-        chunkSize = 256; //1024; 512; 256;
+        int chunkSize = 256; //1024; 512; 256;
         doDataProcessingStep1(indir, outdir, ch);
-        env.closeLogs();
+        env.logEndTag(m);
+        env.ge.closeLog(env.logID);
     }
 
     /**
@@ -89,7 +89,7 @@ public class STATS19_Main_Process extends STATS19_Object {
     public void doDataProcessingStep1(File indir, File outdir,
             STATS19_Casualty_Handler hholdHandler) {
         // Add code here!
-        
+
     }
 
     boolean doJavaCodeGeneration = false;

@@ -16,7 +16,6 @@
 package uk.ac.leeds.ccg.andyt.generic.data.stats19.core;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
@@ -31,8 +30,8 @@ import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
 public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
         implements Serializable {
 
-    protected Generic_Environment ge;
-    protected int logID;
+    public Generic_Environment ge;
+    public int logID;
     public final STATS19_Casualty_Handler ch;
     public STATS19_Data data;
     public STATS19_Files files;
@@ -48,7 +47,7 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
         } else {
             data = new STATS19_Data(this);
         }
-        initLog(STATS19_Strings.s_STATS19);
+        logID = ge.initLog(STATS19_Strings.s_STATS19);
         ch = new STATS19_Casualty_Handler(this, files.getInputDataDir());
     }
 
@@ -123,7 +122,7 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
     
     public void cacheData() {
         File f = files.getEnvDataFile();
-        String m = "cacheData(File " + f + ")";
+        String m = "cacheData to " + f;
         logStartTag(m);
         Generic_IO.writeObject(data, f);
         logEndTag(m);
@@ -131,29 +130,38 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
 
     public final void loadData() {
         File f = files.getEnvDataFile();
-        String m = "loadData(File " + f + ")";
+        String m = "loadData from " + f;
         logStartTag(m);
         data = (STATS19_Data) Generic_IO.readObject(f);
         logEndTag(m);
     }
 
+    /**
+     * For convenience.
+     * {@link Generic_Environment#logStartTag(java.lang.String, int)}
+     *
+     * @param s The tag name.
+     */
+    public final void logStartTag(String s) {
+        ge.logStartTag(s, logID);
+    }
+
+    /**
+     * For convenience. {@link Generic_Environment#log(java.lang.String, int)}
+     *
+     * @param s The message to be logged.
+     */
     public void log(String s) {
         ge.log(s, logID);
     }
 
-    public void logEndTag(String s) {
+    /**
+     * For convenience.
+     * {@link Generic_Environment#logEndTag(java.lang.String, int)}
+     *
+     * @param s The tag name.
+     */
+    public final void logEndTag(String s) {
         ge.logEndTag(s, logID);
-    }
-
-    public void logStartTag(String s) {
-        ge.logStartTag(s, logID);
-    }
-    
-    public final void initLog(String s) {
-        logID = ge.initLog(s);
-    }
-    
-    public final void closeLogs() {
-        ge.closeLog(logID);
     }
 }

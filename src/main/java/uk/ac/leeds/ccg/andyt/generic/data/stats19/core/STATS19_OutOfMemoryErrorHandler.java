@@ -15,7 +15,6 @@
  */
 package uk.ac.leeds.ccg.andyt.generic.data.stats19.core;
 
-import java.io.Serializable;
 import uk.ac.leeds.ccg.andyt.generic.memory.Generic_OutOfMemoryErrorHandler;
 import uk.ac.leeds.ccg.andyt.generic.memory.Generic_OutOfMemoryErrorHandlerInterface;
 
@@ -25,7 +24,7 @@ import uk.ac.leeds.ccg.andyt.generic.memory.Generic_OutOfMemoryErrorHandlerInter
  */
 public abstract class STATS19_OutOfMemoryErrorHandler
         extends Generic_OutOfMemoryErrorHandler
-        implements Serializable, Generic_OutOfMemoryErrorHandlerInterface {
+        implements Generic_OutOfMemoryErrorHandlerInterface {
 
     //static final long serialVersionUID = 1L;
     //public static long Memory_Threshold = 3000000000L;
