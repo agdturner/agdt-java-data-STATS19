@@ -16,57 +16,36 @@
 package uk.ac.leeds.ccg.andyt.generic.data.stats19.io;
 
 import java.io.File;
-import java.io.Serializable;
-import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
+import uk.ac.leeds.ccg.andyt.data.io.Data_Files;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Strings;
 
 /**
  *
  * @author geoagdt
  */
-public class STATS19_Files extends Generic_Files implements Serializable {
+public class STATS19_Files extends Data_Files {
 
     /**
      *
-     * @param s
+     * @param dir
      */
-    public STATS19_Files() {
-        super();
-    }
-
-    /**
-     *
-     * @param dataDir
-     */
-    public STATS19_Files(File dataDir) {
-        super(dataDir);
+    public STATS19_Files(File dir) {
+        super(dir);
     }
 
     public File getSTATS19InputDir() {
-        File r;
-        r = new File(getInputDataDir(), STATS19_Strings.s_STATS19);
-        return r;
+        return new File(getInputDataDir(), STATS19_Strings.s_STATS19);
     }
 
     public File getGeneratedSTATS19Dir() {
-        File dir;
-        dir = getGeneratedDataDir();
-        File f;
-        f = new File(dir, STATS19_Strings.s_STATS19);
-        f.mkdirs();
-        return f;
+        File r = new File(getGeneratedDataDir(), STATS19_Strings.s_STATS19);
+        r.mkdirs();
+        return r;
     }
     
     public File getGeneratedSTATS19SubsetsDir() {
-        File dir;
-        dir = getGeneratedSTATS19Dir();
-        File f;
-        f = new File(dir, "Subsets");
-        f.mkdirs();
-        return f;
-    }
-
-    public File getEnvDataFile() {
-        return new File(getGeneratedDataDir(), "Env.dat");
+        File r = new File(getGeneratedSTATS19Dir(), STATS19_Strings.s_Subsets);
+        r.mkdirs();
+        return r;
     }
 }
