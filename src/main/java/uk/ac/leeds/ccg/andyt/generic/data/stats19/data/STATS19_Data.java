@@ -115,7 +115,7 @@ public class STATS19_Data extends STATS19_Object {
     protected Object load(File f) {
         String m = "load File " + f.toString();
         env.logStartTag(m);
-        Object r = Generic_IO.readObject(f);
+        Object r = env.ge.io.readObject(f);
         env.logEndTag(m);
         return r;
     }
@@ -128,7 +128,7 @@ public class STATS19_Data extends STATS19_Object {
     protected void cache(File f, Object o) {
         String m = "cache File " + f.toString();
         env.logStartTag(m);
-        Generic_IO.writeObject(o, f);
+        env.ge.io.writeObject(o, f);
         env.logEndTag(m);
     }
 

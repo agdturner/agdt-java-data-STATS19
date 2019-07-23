@@ -18,7 +18,6 @@ package uk.ac.leeds.ccg.andyt.generic.data.stats19.core;
 import java.io.File;
 import java.io.Serializable;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Data;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Casualty_Handler;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
@@ -40,7 +39,8 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
     
     public STATS19_Environment(Generic_Environment ge) {
         //Memory_Threshold = 3000000000L;
-        files = new STATS19_Files(ge.getFiles().getDataDir());
+        this.ge = ge;
+        files = new STATS19_Files(ge.files.getDataDir());
         File f  = files.getEnvDataFile();
         if (f.exists()) {
             loadData();
@@ -124,7 +124,7 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
         File f = files.getEnvDataFile();
         String m = "cacheData to " + f;
         logStartTag(m);
-        Generic_IO.writeObject(data, f);
+        ge.io.writeObject(data, f);
         logEndTag(m);
     }
 
@@ -132,7 +132,7 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
         File f = files.getEnvDataFile();
         String m = "loadData from " + f;
         logStartTag(m);
-        data = (STATS19_Data) Generic_IO.readObject(f);
+        data = (STATS19_Data) ge.io.readObject(f);
         logEndTag(m);
     }
 

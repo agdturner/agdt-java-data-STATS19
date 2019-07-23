@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uk.ac.leeds.ccg.andyt.data.Data_VariableType;
+import uk.ac.leeds.ccg.andyt.data.core.Data_Environment;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Environment;
@@ -48,13 +49,13 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
 
     private static final long serialVersionUID = 1L;
 
-    public STATS19_JavaCodeGenerator(Generic_Environment env) {
-        super(env);
+    public STATS19_JavaCodeGenerator(Data_Environment e) {
+        super(e);
     }
 
     public static void main(String[] args) {
         STATS19_JavaCodeGenerator p;
-        p = new STATS19_JavaCodeGenerator(new Generic_Environment());
+        p = new STATS19_JavaCodeGenerator(new Data_Environment());
         p.run();
     }
     
@@ -68,12 +69,12 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
          */
         int dp = 5;
         
-        File[] fs;
-        fs = new File[2];
-        File indir = files.getInputDataDir();
+        File indir = env.files.getInputDataDir();
+        File[] fs = new File[2];
         fs[0] = new File(new File(indir, "dftRoadSafetyData_Accidents_2017"), "acc.csv");
         fs[1] = new File(new File(indir, "dftRoadSafety_Accidents_2016"), "dftRoadSafety_Accidents_2016.csv");
-        t = getFieldTypes(fs, dp);
+        //t = getFieldTypes(Integer.MAX_VALUE, fs, dp);
+        t = getFieldTypes(100, fs, dp);
         type = "accident";
         run(type, t);
 
@@ -89,10 +90,8 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
     }
 
     public void run(String type, Object[] types) {
-        HashMap<String, Integer> fields;
-        fields = (HashMap<String, Integer>) types[0];
-        File outdir;
-        outdir = new File(files.getDataDir(), "..");
+        HashMap<String, Integer> fields = (HashMap<String, Integer>) types[0];
+        File outdir = new File(env.files.getDataDir(), "..");
         outdir = new File(outdir, "src");
         outdir = new File(outdir, "main");
         outdir = new File(outdir, "java");
@@ -111,20 +110,16 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
         packageName = "uk.ac.leeds.ccg.andyt.generic.data.stats19.data.";
         packageName += type;
 
-        File fout;
-        PrintWriter pw;
         int year;
-        String className;
         String extendedClassName;
         String prepend;
         prepend = "STATS19_";
         type = type.toUpperCase();
-        className = prepend + "_" + type + "_Record";
-        fout = new File(outdir, className + ".java");
-        pw = Generic_IO.getPrintWriter(fout, false);
+        String className = prepend + "_" + type + "_Record";
+        File fout = new File(outdir, className + ".java");
+        PrintWriter pw = env.io.getPrintWriter(fout, false);
         writeHeaderPackageAndImports(pw, packageName, "");
-        printClassDeclarationSerialVersionUID(pw, packageName,
-                className, "", "");
+        printClassDeclarationSerialVersionUID(pw, packageName, className, "", "");
 //                // Print Field Declarations Inits And Getters
 //                printFieldDeclarationsInitsAndGetters(pw, fields[w], fieldTypes);
 //                // Constructor
