@@ -16,6 +16,7 @@
 package uk.ac.leeds.ccg.andyt.generic.data.stats19.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Data;
@@ -37,10 +38,10 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
     
     public transient static final String EOL = System.getProperty("line.separator");
     
-    public STATS19_Environment(Generic_Environment ge) {
+    public STATS19_Environment(Generic_Environment ge) throws IOException {
         //Memory_Threshold = 3000000000L;
         this.ge = ge;
-        files = new STATS19_Files(ge.files.getDataDir());
+        files = new STATS19_Files(ge.files.getDir());
         File f  = files.getEnvDataFile();
         if (f.exists()) {
             loadData();
@@ -48,7 +49,7 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
             data = new STATS19_Data(this);
         }
         logID = ge.initLog(STATS19_Strings.s_STATS19);
-        ch = new STATS19_Casualty_Handler(this, files.getInputDataDir());
+        ch = new STATS19_Casualty_Handler(this, files.getInputDir());
     }
 
     /**

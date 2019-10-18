@@ -34,11 +34,11 @@ public class STATS19_Files extends Data_Files {
     }
 
     public File getSTATS19InputDir() {
-        return new File(getInputDataDir(), STATS19_Strings.s_STATS19);
+        return new File(getInputDir(), STATS19_Strings.s_STATS19);
     }
 
     public File getGeneratedSTATS19Dir() {
-        File r = new File(getGeneratedDataDir(), STATS19_Strings.s_STATS19);
+        File r = new File(getGeneratedDir(), STATS19_Strings.s_STATS19);
         r.mkdirs();
         return r;
     }

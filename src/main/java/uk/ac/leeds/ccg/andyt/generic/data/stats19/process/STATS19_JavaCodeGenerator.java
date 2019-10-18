@@ -17,15 +17,18 @@ package uk.ac.leeds.ccg.andyt.generic.data.stats19.process;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uk.ac.leeds.ccg.andyt.data.Data_VariableType;
+import uk.ac.leeds.ccg.andyt.data.Data_VariableType.Data_VariableNamesAndTypes;
 import uk.ac.leeds.ccg.andyt.data.core.Data_Environment;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
@@ -54,29 +57,32 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
     }
 
     public static void main(String[] args) {
-        STATS19_JavaCodeGenerator p;
-        p = new STATS19_JavaCodeGenerator(new Data_Environment());
-        p.run();
+        try {
+            STATS19_JavaCodeGenerator p;
+            p = new STATS19_JavaCodeGenerator(new Data_Environment());
+            p.run();
+        } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+        }
     }
-    
+
     public void run() {
         delimiter = ",";
         String type;
-        Object[] t;
 
         /**
-         * 
+         *
          */
         int dp = 5;
-        
-        File indir = env.files.getInputDataDir();
+
+        File indir = env.files.getInputDir();
         File[] fs = new File[2];
         fs[0] = new File(new File(indir, "dftRoadSafetyData_Accidents_2017"), "acc.csv");
         fs[1] = new File(new File(indir, "dftRoadSafety_Accidents_2016"), "dftRoadSafety_Accidents_2016.csv");
         //t = getFieldTypes(Integer.MAX_VALUE, fs, dp);
-        t = getFieldTypes(100, fs, dp);
+        Data_VariableNamesAndTypes vnt = getFieldTypes(100, fs, dp);
         type = "accident";
-        run(type, t);
+        run(type, vnt);
 
 //        type = "casualty";
 //        f = getInputFile(type, files.getInputDataDir());
@@ -89,9 +95,8 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
 //        run(type, t);
     }
 
-    public void run(String type, Object[] types) {
-        HashMap<String, Integer> fields = (HashMap<String, Integer>) types[0];
-        File outdir = new File(env.files.getDataDir(), "..");
+    public void run(String type, Data_VariableNamesAndTypes vnt) {
+        File outdir = new File(env.files.getDir(), "..");
         outdir = new File(outdir, "src");
         outdir = new File(outdir, "main");
         outdir = new File(outdir, "java");
@@ -109,25 +114,47 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
         String packageName;
         packageName = "uk.ac.leeds.ccg.andyt.generic.data.stats19.data.";
         packageName += type;
-
         int year;
         String extendedClassName;
         String prepend;
-        prepend = "STATS19_";
+        prepend = "STATS19";
         type = type.toUpperCase();
         String className = prepend + "_" + type + "_Record";
         File fout = new File(outdir, className + ".java");
-        PrintWriter pw = env.io.getPrintWriter(fout, false);
+        PrintWriter pw = env.env.io.getPrintWriter(fout, false);
         writeHeaderPackageAndImports(pw, packageName, "");
         printClassDeclarationSerialVersionUID(pw, packageName, className, "", "");
-//                // Print Field Declarations Inits And Getters
-//                printFieldDeclarationsInitsAndGetters(pw, fields[w], fieldTypes);
-//                // Constructor
-//                pw.println("public " + className + "(String line) {");
-//                pw.println("s = line.split(\"\\t\");");
-//                for (int j = 0; j < headers[w].length; j++) {
-//                    pw.println("init" + headers[w][j] + "(s[" + j + "]);");
-//                }
+        // Print Field Declarations Inits And Getters
+        // initialise type2TypeName
+        type2TypeName = getType2TypeName();
+        //vnt.fieldNames2Order;
+        // Print field declaration
+        Iterator<Integer> ite;
+        ite = vnt.order2FieldNames.keySet().iterator();
+        while (ite.hasNext()) {
+            int index = ite.next();
+            String field = vnt.order2FieldNames.get(index);
+            int typ = vnt.order2Type.get(index);
+            String typeName = type2TypeName.get(typ);
+            // print field declaration
+            pw.println("protected " + typeName + " " + field + ";");
+        }
+//        // Print inits
+//        ite = vnt.order2FieldNames.keySet().iterator();
+//        while (ite.hasNext()) {
+//            int index = ite.next();
+//            String field = vnt.order2FieldNames.get(index);
+//            int typ = vnt.order2Type.get(index);
+//            String typeName = type2TypeName.get(typ);
+//        
+//            printFieldDeclarationsInitsAndGetters(pw, fields, fieldTypes, v0);
+//            // Constructor
+//            pw.println("public " + className + "(String line) {");
+//            pw.println("s = line.split(\"\\t\");");
+//            for (int j = 0; j < headers[w].length; j++) {
+//                pw.println("init" + headers[w][j] + "(s[" + j + "]);");
+//            }
+//        }
         pw.println("}");
         pw.println("}");
         pw.close();
@@ -164,12 +191,12 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
             String extendedClassName) {
         pw.print("public class " + className);
         if (!extendedClassName.isEmpty()) {
-            pw.print(" extends " + extendedClassName + " {");
+            pw.print(" extends " + extendedClassName);
         }
         if (!implementations.isEmpty()) {
-            pw.print(" implements " + implementations + " {");
+            pw.print(" implements " + implementations);
         }
-        pw.println();
+        pw.println(" {");
         /**
          * This is not included for performance reasons. pw.println("private
          * static final long serialVersionUID = " + serialVersionUID + ";");
@@ -287,43 +314,33 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
         while (ite.hasNext()) {
             field = ite.next();
             fieldType = fieldTypes.get(field);
+            pw.println("protected final void init" + field + "(String s) {");
+            pw.println("if (!s.trim().isEmpty()) {");
             switch (fieldType) {
-                case 0:
-                    pw.println("protected final void init" + field + "(String s) {");
-                    pw.println("if (!s.trim().isEmpty()) {");
+                    case 0:
                     pw.println(field + " = s;");
                     break;
                 case 1:
-                    pw.println("protected final void init" + field + "(String s) {");
-                    pw.println("if (!s.trim().isEmpty()) {");
                     pw.println(field + " = Double.parseDouble(s);");
                     pw.println("} else {");
                     pw.println(field + " = Double.NaN;");
                     break;
                 case 2:
-                    pw.println("protected final void init" + field + "(String s) {");
-                    pw.println("if (!s.trim().isEmpty()) {");
                     pw.println(field + " = Integer.parseInt(s);");
                     pw.println("} else {");
                     pw.println(field + " = Integer.MIN_VALUE;");
                     break;
                 case 3:
-                    pw.println("protected final void init" + field + "(String s) {");
-                    pw.println("if (!s.trim().isEmpty()) {");
                     pw.println(field + " = Short.parseShort(s);");
                     pw.println("} else {");
                     pw.println(field + " = Short.MIN_VALUE;");
                     break;
                 case 4:
-                    pw.println("protected final void init" + field + "(String s) {");
-                    pw.println("if (!s.trim().isEmpty()) {");
                     pw.println(field + " = Byte.parseByte(s);");
                     pw.println("} else {");
                     pw.println(field + " = Byte.MIN_VALUE;");
                     break;
                 default:
-                    pw.println("protected final void init" + field + "(String s) {");
-                    pw.println("if (!s.trim().isEmpty()) {");
                     pw.println("byte b = Byte.parseByte(s);");
                     if (v0.get(field) == null) {
                         pw.println(field + " = false;");
@@ -341,8 +358,6 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
             pw.println();
         }
     }
-
-    
 
     protected HashMap<String, Byte> setCommonBooleanMaps(
             HashMap<String, Byte>[] v0ms,

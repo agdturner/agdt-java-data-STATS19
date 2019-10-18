@@ -16,6 +16,9 @@
 package uk.ac.leeds.ccg.andyt.generic.data.stats19.process;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Environment;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
@@ -41,12 +44,16 @@ public class STATS19_Main_Process extends STATS19_Object {
     }
 
     public static void main(String[] args) {
-        STATS19_Main_Process p = new STATS19_Main_Process(
-                new STATS19_Environment(new Generic_Environment()));
-        // Main switches
-        p.doJavaCodeGeneration = true;
-        //p.doLoadDataIntoCaches = true; // rename/reuse just left here for convenience...
-        p.run();
+        try {
+            STATS19_Main_Process p = new STATS19_Main_Process(
+                    new STATS19_Environment(new Generic_Environment()));
+            // Main switches
+            p.doJavaCodeGeneration = true;
+            //p.doLoadDataIntoCaches = true; // rename/reuse just left here for convenience...
+            p.run();
+        } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+        }
     }
 
     public void run() {
