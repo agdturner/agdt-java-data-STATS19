@@ -16,6 +16,7 @@
 package uk.ac.leeds.ccg.andyt.generic.data.stats19.io;
 
 import java.io.File;
+import java.io.IOException;
 import uk.ac.leeds.ccg.andyt.data.io.Data_Files;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Strings;
 
@@ -29,7 +30,7 @@ public class STATS19_Files extends Data_Files {
      *
      * @param dir
      */
-    public STATS19_Files(File dir) {
+    public STATS19_Files(File dir) throws IOException {
         super(dir);
     }
 

@@ -17,6 +17,7 @@ package uk.ac.leeds.ccg.andyt.generic.data.stats19.process;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
         }
     }
 
-    public void run() {
+    public void run() throws FileNotFoundException, IOException {
         delimiter = ",";
         String type;
 
@@ -95,7 +96,7 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
 //        run(type, t);
     }
 
-    public void run(String type, Data_VariableNamesAndTypes vnt) {
+    public void run(String type, Data_VariableNamesAndTypes vnt) throws IOException {
         File outdir = new File(env.files.getDir(), "..");
         outdir = new File(outdir, "src");
         outdir = new File(outdir, "main");
