@@ -27,7 +27,7 @@ import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
  *
  * @author geoagdt
  */
-public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
+public class STATS19_Environment extends STATS19_MemoryManager
         implements Serializable {
 
     public Generic_Environment ge;
@@ -65,7 +65,7 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
 //            if (clear == 0) {
 //                return false;
 //            }
-            if (!swapDataAny()) {
+            if (!cacheDataAny()) {
                 return false;
             }
         }
@@ -78,15 +78,15 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
      * @return 
      */
     @Override
-    public boolean swapDataAny(boolean hoome) {
+    public boolean cacheDataAny(boolean hoome) {
         try {
-            boolean r = swapDataAny();
+            boolean r = cacheDataAny();
             checkAndMaybeFreeMemory();
             return r;
         } catch (OutOfMemoryError e) {
             if (hoome) {
                 clearMemoryReserve();
-                boolean r = swapDataAny(HOOMEF);
+                boolean r = cacheDataAny(HOOMEF);
                 initMemoryReserve();
                 return r;
             } else {
@@ -96,12 +96,12 @@ public class STATS19_Environment extends STATS19_OutOfMemoryErrorHandler
     }
 
     /**
-     * Currently this just tries to swap WaAS data.
+     * Currently this just tries to cache WaAS data.
      *
      * @return
      */
     @Override
-    public boolean swapDataAny() {
+    public boolean cacheDataAny() {
         boolean r = clearSomeData();
         if (r) {
             return r;
