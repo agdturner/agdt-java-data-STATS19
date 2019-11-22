@@ -51,16 +51,20 @@ import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Object;
  */
 public class STATS19_JavaCodeGenerator extends Data_VariableType {
 
+    public STATS19_Environment e;
+    
     private static final long serialVersionUID = 1L;
 
-    public STATS19_JavaCodeGenerator(Data_Environment e) {
-        super(e);
+    public STATS19_JavaCodeGenerator(STATS19_Environment e) {
+        super(e.de);
+        this.e = e;
     }
 
     public static void main(String[] args) {
         try {
-            STATS19_JavaCodeGenerator p;
-            p = new STATS19_JavaCodeGenerator(new Data_Environment());
+            STATS19_Environment e = new STATS19_Environment(
+                    new Data_Environment(new Generic_Environment()));
+            STATS19_JavaCodeGenerator p = new STATS19_JavaCodeGenerator(e);
             p.run();
         } catch (IOException ex) {
             ex.printStackTrace(System.err);
@@ -76,7 +80,7 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
          */
         int dp = 5;
 
-        File indir = env.files.getInputDir();
+        File indir = e.files.getInputDir();
         File[] fs = new File[2];
         fs[0] = new File(new File(indir, "dftRoadSafetyData_Accidents_2017"), "acc.csv");
         fs[1] = new File(new File(indir, "dftRoadSafety_Accidents_2016"), "dftRoadSafety_Accidents_2016.csv");
@@ -97,8 +101,7 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
     }
 
     public void run(String type, Data_VariableNamesAndTypes vnt) throws IOException {
-        File outdir = new File(env.files.getDir(), "..");
-        outdir = new File(outdir, "src");
+        File outdir = new File(System.getProperty("user.dir"), "src");
         outdir = new File(outdir, "main");
         outdir = new File(outdir, "java");
         outdir = new File(outdir, "uk");

@@ -17,8 +17,7 @@ package uk.ac.leeds.ccg.andyt.generic.data.stats19.process;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import uk.ac.leeds.ccg.andyt.data.core.Data_Environment;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.core.STATS19_Environment;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
@@ -31,13 +30,13 @@ import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Casualty_Handler;
  *
  * @author geoagdt
  */
-public class STATS19_Main_Process extends STATS19_Object {
+public class STATS19_Main extends STATS19_Object {
 
     // For convenience
     protected final STATS19_Data data;
     protected final STATS19_Files files;
 
-    public STATS19_Main_Process(STATS19_Environment env) {
+    public STATS19_Main(STATS19_Environment env) {
         super(env);
         data = env.data;
         files = env.files;
@@ -45,8 +44,10 @@ public class STATS19_Main_Process extends STATS19_Object {
 
     public static void main(String[] args) {
         try {
-            STATS19_Main_Process p = new STATS19_Main_Process(
-                    new STATS19_Environment(new Generic_Environment()));
+            Data_Environment de = new Data_Environment(
+                    new Generic_Environment());
+            STATS19_Main p = new STATS19_Main(
+                    new STATS19_Environment(de));
             // Main switches
             p.doJavaCodeGeneration = true;
             //p.doLoadDataIntoCaches = true; // rename/reuse just left here for convenience...

@@ -18,6 +18,7 @@ package uk.ac.leeds.ccg.andyt.generic.data.stats19.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import uk.ac.leeds.ccg.andyt.data.core.Data_Environment;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Data;
 import uk.ac.leeds.ccg.andyt.generic.data.stats19.data.STATS19_Casualty_Handler;
@@ -30,26 +31,30 @@ import uk.ac.leeds.ccg.andyt.generic.data.stats19.io.STATS19_Files;
 public class STATS19_Environment extends STATS19_MemoryManager
         implements Serializable {
 
-    public Generic_Environment ge;
+    public transient final Data_Environment de;
+    public transient final Generic_Environment ge;
+    
     public int logID;
-    public final STATS19_Casualty_Handler ch;
+    //public final STATS19_Casualty_Handler ch;
     public STATS19_Data data;
     public STATS19_Files files;
     
     public transient static final String EOL = System.getProperty("line.separator");
     
-    public STATS19_Environment(Generic_Environment ge) throws IOException {
+    public STATS19_Environment(Data_Environment de) throws IOException {
         //Memory_Threshold = 3000000000L;
-        this.ge = ge;
-        files = new STATS19_Files(ge.files.getDir());
-        File f  = files.getEnvDataFile();
-        if (f.exists()) {
-            loadData();
-        } else {
-            data = new STATS19_Data(this);
-        }
+        this.de = de;
+        this.ge = de.env;
+        File dir = new File(de.files.getDataDir(), STATS19_Strings.s_STATS19);
+        files = new STATS19_Files(dir);
+//        File f  = files.getEnvDataFile();
+//        if (f.exists()) {
+//            loadData();
+//        } else {
+//            data = new STATS19_Data(this);
+//        }
         logID = ge.initLog(STATS19_Strings.s_STATS19);
-        ch = new STATS19_Casualty_Handler(this, files.getInputDir());
+        //ch = new STATS19_Casualty_Handler(this, files.getInputDir());
     }
 
     /**
