@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.leeds.ccg.andyt.generic.data.stats19.data;
+package uk.ac.leeds.ccg.data.stats19.data;
 
-import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  *
  * @author geoagdt
  */
-public abstract class STATS19_Record implements Serializable {
-    
-    protected final STATS19_ID ID;
+public class STATS19_Combined_Record extends STATS19_Record {
 
-    public STATS19_Record(STATS19_ID ID) {
-        this.ID = ID;
-    }
-
-    /**
-     * @return the ID
-     */
-    public STATS19_ID getID() {
-        return ID;
+    public STATS19_Combined_Record(STATS19_ID ID) {
+        super(ID);
     }
 }
