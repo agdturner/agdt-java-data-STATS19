@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 geoagdt.
+ * Copyright 2018 Andy Turner, CCG, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,26 @@
  */
 package uk.ac.leeds.ccg.data.stats19.core;
 
-import java.io.Serializable;
+import uk.ac.leeds.ccg.generic.core.Generic_Strings;
 
 /**
+ * S_Strings
+ * 
  * @author Andy Turner
  * @version 1.0.0
  */
-public abstract class STATS19_Object implements Serializable {
+public class S_Strings extends Generic_Strings {
 
-    public transient STATS19_Environment env;
+    private static final long serialVersionUID = 1L;
 
-    protected STATS19_Object() {
-    }
+    public static final String s_STATS19 = "STATS19";
+    public static final String s_accident = "accident";
+    public static final String s_casualty = "casualty";
+    public static final String s_person = "person";
+    public static final String s_Subsets = "Subsets";
+    public static final String s_vehicle = "vehicle";
 
-    public STATS19_Object(STATS19_Environment e) {
-        env = e;
+    public S_Strings() {
+        super();
     }
 }

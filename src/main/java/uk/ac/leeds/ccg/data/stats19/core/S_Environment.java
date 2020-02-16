@@ -20,17 +20,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import uk.ac.leeds.ccg.data.core.Data_Environment;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.data.stats19.data.STATS19_Data;
-import uk.ac.leeds.ccg.data.stats19.io.STATS19_Files;
+import uk.ac.leeds.ccg.data.stats19.data.S_Data;
+import uk.ac.leeds.ccg.data.stats19.io.S_Files;
 import uk.ac.leeds.ccg.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.generic.memory.Generic_MemoryManager;
 
 /**
- *
+ * S_Environment
+ * 
  * @author Andy Turner
  * @version 1.0.0
  */
-public class STATS19_Environment extends Generic_MemoryManager {
+public class S_Environment extends Generic_MemoryManager {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,24 +40,24 @@ public class STATS19_Environment extends Generic_MemoryManager {
     
     public int logID;
     //public final STATS19_Casualty_Handler ch;
-    public STATS19_Data data;
-    public STATS19_Files files;
+    public S_Data data;
+    public S_Files files;
     
     public transient static final String EOL = System.getProperty("line.separator");
     
-    public STATS19_Environment(Data_Environment de) throws IOException, Exception {
+    public S_Environment(Data_Environment de) throws IOException, Exception {
         //Memory_Threshold = 3000000000L;
         this.de = de;
         this.env = de.env;
-        Path dir = Paths.get(de.files.getDataDir().toString(), STATS19_Strings.s_STATS19);
-        files = new STATS19_Files(dir);
+        Path dir = Paths.get(de.files.getDataDir().toString(), S_Strings.s_STATS19);
+        files = new S_Files(dir);
 //        Path f  = files.getEnvDataFile();
 //        if (f.exists()) {
 //            loadData();
 //        } else {
-//            data = new STATS19_Data(this);
+//            data = new S_Data(this);
 //        }
-        logID = env.initLog(STATS19_Strings.s_STATS19);
+        logID = env.initLog(S_Strings.s_STATS19);
         //ch = new STATS19_Casualty_Handler(this, files.getInputDir());
     }
 
@@ -141,7 +142,7 @@ public class STATS19_Environment extends Generic_MemoryManager {
         Path f = files.getEnvDataFile();
         String m = "loadData from " + f;
         logStartTag(m);
-        data = (STATS19_Data) Generic_IO.readObject(f);
+        data = (S_Data) Generic_IO.readObject(f);
         logEndTag(m);
     }
 

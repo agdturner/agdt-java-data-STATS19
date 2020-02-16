@@ -20,15 +20,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import uk.ac.leeds.ccg.data.io.Data_Files;
-import uk.ac.leeds.ccg.data.stats19.core.STATS19_Strings;
+import uk.ac.leeds.ccg.data.stats19.core.S_Strings;
 
 /**
- * STATS19_Files
+ * S_Files
  * 
  * @author Andy Turner
  * @version 1.0.0
  */
-public class STATS19_Files extends Data_Files {
+public class S_Files extends Data_Files {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,22 +36,12 @@ public class STATS19_Files extends Data_Files {
      * @param dir What {@link #dir} is set using.
      * @throws java.io.IOException If encountered.
      */
-    public STATS19_Files(Path dir) throws IOException {
+    public S_Files(Path dir) throws IOException {
         super(dir);
     }
-
-    public Path getSTATS19InputDir() throws IOException {
-        return Paths.get(getInputDir().toString(), STATS19_Strings.s_STATS19);
-    }
-
-    public Path getGeneratedSTATS19Dir() throws IOException {
-        Path r = Paths.get(getGeneratedDir().toString(), STATS19_Strings.s_STATS19);
-        Files.createDirectories(r);
-        return r;
-    }
     
-    public Path getGeneratedSTATS19SubsetsDir() throws IOException {
-        Path r = Paths.get(getGeneratedSTATS19Dir().toString(), STATS19_Strings.s_Subsets);
+    public Path getGeneratedSubsetsDir() throws IOException {
+        Path r = Paths.get(getGeneratedDir().toString(), S_Strings.s_Subsets);
         Files.createDirectories(r);
         return r;
     }

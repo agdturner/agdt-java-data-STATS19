@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 geoagdt.
+ * Copyright 2018 Andy Turner, CCG, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.leeds.ccg.data.stats19.data;
+package uk.ac.leeds.ccg.data.stats19.data.id;
 
-import java.nio.file.Path;
-import uk.ac.leeds.ccg.data.stats19.core.STATS19_Environment;
-import uk.ac.leeds.ccg.data.stats19.core.STATS19_Strings;
+import uk.ac.leeds.ccg.data.id.Data_ID_int;
 
 /**
- * STATS19_Casualty_Handler
+ * STATS19_ID_int
  * 
  * @author Andy Turner
  * @version 1.0.0
  */
-public class STATS19_Casualty_Handler extends STATS19_Handler {
+public class S_CollectionID extends Data_ID_int {
+    
+    private static final long serialVersionUID = 1L;
 
-    public STATS19_Casualty_Handler(STATS19_Environment e, Path indir) {
-        super(e);
-        type = STATS19_Strings.s_casualty;
-        this.indir = indir;
+    public S_CollectionID(int i) {
+        super(i);
     }
+
 }

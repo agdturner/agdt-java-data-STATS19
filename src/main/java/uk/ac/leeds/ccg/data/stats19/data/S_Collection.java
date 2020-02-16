@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 geoagdt.
+ * Copyright 2018 Andy Turner, CCG, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,26 @@
  */
 package uk.ac.leeds.ccg.data.stats19.data;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import uk.ac.leeds.ccg.data.stats19.core.STATS19_Environment;
-import uk.ac.leeds.ccg.data.stats19.core.STATS19_Strings;
+import java.util.HashMap;
+import uk.ac.leeds.ccg.data.stats19.core.S_Object;
+import uk.ac.leeds.ccg.data.stats19.data.id.S_CollectionID;
+import uk.ac.leeds.ccg.data.stats19.data.id.S_ID_long;
 
 /**
- * STATS19_Accident_Handler
+ * S_Collection
  * 
  * @author Andy Turner
  * @version 1.0.0
  */
-public class STATS19_Accident_Handler extends STATS19_Handler {
+public class S_Collection extends S_Object {
 
-    public STATS19_Accident_Handler(STATS19_Environment e, Path indir) {
-        super(e);
-        type = STATS19_Strings.s_accident;
-        this.indir = indir;
+    public final S_CollectionID id;
+
+    public final HashMap<S_ID_long, S_Record> data;
+
+    public S_Collection(S_CollectionID i) {
+        this.id = i;
+        data = new HashMap<>();
     }
 
-    protected Path getFile(Path dir, byte wave) {
-        return Paths.get(dir.toString(), type + ".dat");
-    }
 }
