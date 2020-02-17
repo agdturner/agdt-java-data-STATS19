@@ -11,7 +11,7 @@ public class S_Vehicle_Record extends Data_Record {
     private static final long serialVersionUID = 1L;
 
     protected String Acc_Index;
-    protected Byte Vehicle_Reference;
+    protected Short Vehicle_Reference;
     protected Byte Vehicle_Type;
     protected Byte Towing_and_Articulation;
     protected Byte Vehicle_Manoeuvre;
@@ -77,7 +77,7 @@ public class S_Vehicle_Record extends Data_Record {
 
     protected final void initVehicle_Reference(String s) {
         if (!s.trim().isEmpty()) {
-            Vehicle_Reference = Byte.parseByte(s);
+            Vehicle_Reference = Short.parseShort(s);
         } else {
             Vehicle_Reference = null;
         }
@@ -239,7 +239,7 @@ public class S_Vehicle_Record extends Data_Record {
         return Acc_Index;
     }
 
-    public Byte getVehicle_Reference() {
+    public Short getVehicle_Reference() {
         return Vehicle_Reference;
     }
 
