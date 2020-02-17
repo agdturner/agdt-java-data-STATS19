@@ -38,6 +38,7 @@ import uk.ac.leeds.ccg.data.stats19.data.id.S_CollectionID;
 import uk.ac.leeds.ccg.data.stats19.data.id.S_ID_long;
 import uk.ac.leeds.ccg.data.stats19.data.id.S_RecordID;
 import uk.ac.leeds.ccg.data.stats19.data.vehicle.S_Vehicle_Record;
+import uk.ac.leeds.ccg.data.stats19.data.vehicle.S_Vehicle_Record_2014Plus;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.generic.io.Generic_IO;
 
@@ -175,9 +176,14 @@ public class S_Main extends S_Object {
                     env.log(line);                      // ... but log it.
                     line = reader.readLine();
                     while (line != null) {
-                        S_RecordID i = new S_RecordID(cl);
+                        S_RecordID i = new S_RecordID(cl);                       
                         try {
-                            S_Vehicle_Record vr = new S_Vehicle_Record(i, line);
+                            S_Vehicle_Record vr;
+                            if (year < 2014) {
+                                vr = new S_Vehicle_Record(i, line);
+                            } else {
+                                vr = new S_Vehicle_Record_2014Plus(i, line);
+                            }
                             S_ID_long id = env.data.ai2aiid.get(vr.getAcc_Index());
                             S_Record r = c.data.get(id);
                             r.vRecs.add(vr);
