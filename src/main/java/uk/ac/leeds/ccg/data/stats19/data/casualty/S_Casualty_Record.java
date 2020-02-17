@@ -11,8 +11,8 @@ public class S_Casualty_Record extends Data_Record {
     private static final long serialVersionUID = 1L;
 
     protected String Acc_Index;
-    protected Byte Vehicle_Reference;
-    protected Byte Casualty_Reference;
+    protected Short Vehicle_Reference;
+    protected Short Casualty_Reference;
     protected Byte Casualty_Class;
     protected Byte Sex_of_Casualty;
     protected Byte Age_Band_of_Casualty;
@@ -59,7 +59,7 @@ public class S_Casualty_Record extends Data_Record {
 
     protected final void initVehicle_Reference(String s) {
         if (!s.trim().isEmpty()) {
-            Vehicle_Reference = Byte.parseByte(s);
+            Vehicle_Reference = Short.parseShort(s);
         } else {
             Vehicle_Reference = null;
         }
@@ -67,7 +67,7 @@ public class S_Casualty_Record extends Data_Record {
 
     protected final void initCasualty_Reference(String s) {
         if (!s.trim().isEmpty()) {
-            Casualty_Reference = Byte.parseByte(s);
+            Casualty_Reference = Short.parseShort(s);
         } else {
             Casualty_Reference = null;
         }
@@ -165,11 +165,11 @@ public class S_Casualty_Record extends Data_Record {
         return Acc_Index;
     }
 
-    public Byte getVehicle_Reference() {
+    public Short getVehicle_Reference() {
         return Vehicle_Reference;
     }
 
-    public Byte getCasualty_Reference() {
+    public Short getCasualty_Reference() {
         return Casualty_Reference;
     }
 

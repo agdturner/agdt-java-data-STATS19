@@ -16,6 +16,7 @@
 package uk.ac.leeds.ccg.data.stats19.core;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import uk.ac.leeds.ccg.data.core.Data_Environment;
@@ -51,14 +52,13 @@ public class S_Environment extends Generic_MemoryManager {
         this.env = de.env;
         Path dir = Paths.get(de.files.getDataDir().toString(), S_Strings.s_STATS19);
         files = new S_Files(dir);
-//        Path f  = files.getEnvDataFile();
-//        if (f.exists()) {
-//            loadData();
-//        } else {
-//            data = new S_Data(this);
-//        }
+        Path f  = files.getEnvDataFile();
+        if (Files.exists(f)) {
+            loadData();
+        } else {
+            data = new S_Data(this);
+        }
         logID = env.initLog(S_Strings.s_STATS19);
-        //ch = new STATS19_Casualty_Handler(this, files.getInputDir());
     }
 
     /**

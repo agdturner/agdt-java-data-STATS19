@@ -16,6 +16,7 @@
 package uk.ac.leeds.ccg.data.stats19.data;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import uk.ac.leeds.ccg.data.Data_Record;
 import uk.ac.leeds.ccg.data.id.Data_RecordID;
@@ -42,6 +43,8 @@ public class S_Record extends S_Object {
     public S_Record(S_Environment e, S_ID_long i) {
         super(e);
         id = i;
+        cRecs = new HashSet<>();
+        vRecs = new HashSet<>();
     }
 
     

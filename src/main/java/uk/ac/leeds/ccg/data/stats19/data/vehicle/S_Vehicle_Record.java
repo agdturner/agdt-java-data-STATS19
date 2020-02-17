@@ -26,11 +26,15 @@ public class S_Vehicle_Record extends Data_Record {
     protected Byte Journey_Purpose_of_Driver;
     protected Byte Sex_of_Driver;
     protected Byte Age_Band_of_Driver;
-    protected Short Engine_Capacity_CC;
+    protected Integer Engine_Capacity_CC;
     protected Byte Propulsion_Code;
     protected Byte Age_of_Vehicle;
     protected Byte Driver_IMD_Decile;
     protected Byte Driver_Home_Area_Type;
+
+    public S_Vehicle_Record(S_RecordID i) {
+        super(i);        
+    }
 
     public S_Vehicle_Record(S_RecordID i, String line) throws Exception {
         super(i);
@@ -193,7 +197,7 @@ public class S_Vehicle_Record extends Data_Record {
 
     protected final void initEngine_Capacity_CC(String s) {
         if (!s.trim().isEmpty()) {
-            Engine_Capacity_CC = Short.parseShort(s);
+            Engine_Capacity_CC = Integer.parseInt(s);
         } else {
             Engine_Capacity_CC = null;
         }
@@ -295,7 +299,7 @@ public class S_Vehicle_Record extends Data_Record {
         return Age_Band_of_Driver;
     }
 
-    public Short getEngine_Capacity_CC() {
+    public Integer getEngine_Capacity_CC() {
         return Engine_Capacity_CC;
     }
 

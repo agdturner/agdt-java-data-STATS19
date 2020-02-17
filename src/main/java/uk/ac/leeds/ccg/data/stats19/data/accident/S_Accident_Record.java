@@ -17,6 +17,8 @@ public class S_Accident_Record extends Data_Record {
 
     private static final long serialVersionUID = 1L;
 
+    protected static String NULL = "NULL";
+    
     protected String Accident_Index;
     protected Integer Location_Easting_OSGR;
     protected Integer Location_Northing_OSGR;
@@ -84,7 +86,7 @@ public class S_Accident_Record extends Data_Record {
         initCarriageway_Hazards(s[28]);
         initUrban_or_Rural_Area(s[29]);
         initDid_Police_Officer_Attend_Scene_of_Accident(s[30]);
-        if (s.length >= 31) {
+        if (s.length > 31) {
             initLSOA_of_Accident_Location(s[31]);
         }
     }
@@ -120,7 +122,11 @@ public class S_Accident_Record extends Data_Record {
 
     protected final void initLongitude(String s) {
         if (!s.trim().isEmpty()) {
-            Longitude = new BigDecimal(s);
+            if(s.equalsIgnoreCase(NULL)) {
+                Longitude = null;
+            } else {
+                Longitude = new BigDecimal(s);
+            }
         } else {
             Longitude = null;
         }
@@ -128,7 +134,11 @@ public class S_Accident_Record extends Data_Record {
 
     protected final void initLatitude(String s) {
         if (!s.trim().isEmpty()) {
-            Latitude = new BigDecimal(s);
+            if(s.equalsIgnoreCase(NULL)) {
+                Latitude = null;
+            } else {
+                Latitude = new BigDecimal(s);
+            }
         } else {
             Latitude = null;
         }
@@ -232,7 +242,11 @@ public class S_Accident_Record extends Data_Record {
 
     protected final void initSpeed_limit(String s) {
         if (!s.trim().isEmpty()) {
-            Speed_limit = Byte.parseByte(s);
+            if (s.equalsIgnoreCase(NULL)) {
+                Speed_limit = null;
+            } else {
+                Speed_limit = Byte.parseByte(s);
+            }
         } else {
             Speed_limit = null;
         }
