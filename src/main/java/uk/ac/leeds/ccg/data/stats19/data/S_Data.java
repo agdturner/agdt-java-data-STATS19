@@ -53,6 +53,11 @@ public class S_Data extends S_Object {
     public final HashMap<S_ID_long, String> aiid2ai;
 
     /**
+     * Looks up from an Accident Index ID to a Collection ID.
+     */
+    public final HashMap<S_ID_long, S_CollectionID> aiid2cid;
+
+    /**
      * Police Force
      * <ul>
      * <li>code,label</li>
@@ -3695,6 +3700,7 @@ public class S_Data extends S_Object {
         data = new HashMap<>();
         ai2aiid = new HashMap<>();
         aiid2ai = new HashMap<>();
+        aiid2cid = new HashMap<>();
     }
 
     public boolean clearSomeData() throws IOException {

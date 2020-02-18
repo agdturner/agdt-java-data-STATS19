@@ -71,7 +71,7 @@ public class S_Main extends S_Object {
                             new Generic_Defaults(dataDir))));
             S_Main p = new S_Main(e);
             // Main switches
-            //p.doLoadDataIntoCaches = true; // rename/reuse just left here for convenience...
+            p.doLoadData = true;//false;
             p.run();
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
@@ -80,136 +80,147 @@ public class S_Main extends S_Object {
 
     public void run() {
         try {
-            String m = "run";
-            env.logStartTag(m);
-            Path indir = files.getInputDir();
-            Path gendir = files.getGeneratedDir();
-            Path outdir = Paths.get(gendir.toString(), S_Strings.s_Subsets);
-            Files.createDirectories(outdir);
-            Data_ReadCSV reader = new Data_ReadCSV(env.de);
-            int startYear = 2009;
-            int endYear = 2018;
-            int syntax = 1;
-            data = new S_Data(env);
-            long al = 0;
-            long cl = 0;
-            long vl = 0;
-            for (int year = startYear; year <= endYear; year++) {
-                S_CollectionID cid =new S_CollectionID(year);
-                S_Collection c = new S_Collection(cid);
-                env.data.data.put(cid, c);
-                // Accidents
-                Path aP = Paths.get(indir.toString(), "Accidents_"
-                        + Integer.toString(year) + ".csv");
-                env.env.log("Reading " + aP.toString());
-                long lf = 0;
-                try (BufferedReader br = Generic_IO.getBufferedReader(aP)) {
-                    reader.setStreamTokenizer(br, syntax);
-                    String line = reader.readLine();    // Skip header...
-                    env.log(line);                      // ... but log it.
-                    line = reader.readLine();
-                    while (line != null) {
-                        S_RecordID i = new S_RecordID(al);
-                        try {
-                            S_Accident_Record ar = new S_Accident_Record(i, line);
-                            S_ID_long id = new S_ID_long(al);
-                            env.data.ai2aiid.put(ar.getAccident_Index(), id);
-                            env.data.aiid2ai.put(id, ar.getAccident_Index());
-                            S_Record r = new S_Record(env, id);
-                            r.aRec = ar;
-                            c.data.put(id, r);
-                            if (lf % 10000 == 0) {
-                                env.env.log("loaded accident record " + lf);
-                            }
-                        } catch (Exception ex) {
-                            ex.printStackTrace(System.err);
-                            env.env.log(ex.getMessage() + " loading accident record " + lf);
-                        }
-                        line = reader.readLine();
-                            if (al % 100000 == 0) {
-                                env.env.log("loaded " + al);
-                            }
-                        al++;
-                        lf ++;
-                    }
-                }
-                // Casualties
-                Path cP = Paths.get(indir.toString(), "Casualties_"
-                        + Integer.toString(year) + ".csv");
-                env.env.log("Reading " + cP.toString());
-                lf = 0;
-                try (BufferedReader br = Generic_IO.getBufferedReader(cP)) {
-                    reader.setStreamTokenizer(br, syntax);
-                    String line = reader.readLine();    // Skip header...
-                    env.log(line);                      // ... but log it.
-                    line = reader.readLine();
-                    while (line != null) {
-                        S_RecordID i = new S_RecordID(cl);
-                        try {
-                            S_Casualty_Record cr = new S_Casualty_Record(i, line);
-                            S_ID_long id = env.data.ai2aiid.get(cr.getAcc_Index());
-                            S_Record r = c.data.get(id);
-                            r.cRecs.add(cr);
-                            if (lf % 10000 == 0) {
-                                env.env.log("loaded casualty record " + lf);
-                            }
-                        } catch (Exception ex) {
-                            ex.printStackTrace(System.err);
-                            env.env.log(ex.getMessage() + " loading casualty record " + lf);
-                        }
-                        line = reader.readLine();
-                            if (cl % 100000 == 0) {
-                                env.env.log("loaded " + cl);
-                            }
-                        cl++;
-                        lf ++;
-                    }
-                }
-                // Vehicles
-                Path vP = Paths.get(indir.toString(), "Vehicles_"
-                        + Integer.toString(year) + ".csv");
-                env.env.log("Reading " + vP.toString());
-                lf = 0;
-                try (BufferedReader br = Generic_IO.getBufferedReader(vP)) {
-                    reader.setStreamTokenizer(br, syntax);
-                    String line = reader.readLine();    // Skip header...
-                    env.log(line);                      // ... but log it.
-                    line = reader.readLine();
-                    while (line != null) {
-                        S_RecordID i = new S_RecordID(vl);                       
-                        try {
-                            S_Vehicle_Record vr;
-                            if (year < 2014) {
-                                vr = new S_Vehicle_Record(i, line);
-                            } else {
-                                vr = new S_Vehicle_Record_2014Plus(i, line);
-                            }
-                            S_ID_long id = env.data.ai2aiid.get(vr.getAcc_Index());
-                            S_Record r = c.data.get(id);
-                            r.vRecs.add(vr);
-                            if (lf % 10000 == 0) {
-                                env.env.log("loaded vehicle record " + lf);
-                            }
-                        } catch (Exception ex) {
-                            ex.printStackTrace(System.err);
-                            env.env.log(ex.getMessage() + " loading vehicle record " + lf);
-                        }
-                        line = reader.readLine();
-                            if (vl % 100000 == 0) {
-                                env.env.log("loaded " + vl);
-                            }
-                        vl++;
-                        lf ++;
-                    }
-                }
-                env.data.cacheCollection(cid, c);
-                env.data.clearCollection(cid);
+            if (doLoadData) {
+                loadData();
             }
-            env.logEndTag(m);
-            env.env.closeLog(env.logID);
-            env.swapData();
+            env.env.log("env.data.ai2aiid.size() " + env.data.ai2aiid.size());
+            env.env.log("env.data.aiid2cid.size() " + env.data.aiid2cid.size());
         } catch (IOException ex) {
             Logger.getLogger(S_Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public void loadData() throws IOException {
+        String m = "loadData";
+        env.logStartTag(m);
+        Path indir = files.getInputDir();
+        Path gendir = files.getGeneratedDir();
+        Path outdir = Paths.get(gendir.toString(), S_Strings.s_Subsets);
+        Files.createDirectories(outdir);
+        Data_ReadCSV reader = new Data_ReadCSV(env.de);
+        int startYear = 2009;
+        int endYear = 2018;
+        int syntax = 1;
+        data = new S_Data(env);
+        long al = 0;
+        long cl = 0;
+        long vl = 0;
+        for (int year = startYear; year <= endYear; year++) {
+            S_CollectionID cid = new S_CollectionID(year);
+            S_Collection c = new S_Collection(cid);
+            env.data.data.put(cid, c);
+            // Accidents
+            Path aP = Paths.get(indir.toString(), "Accidents_"
+                    + Integer.toString(year) + ".csv");
+            env.env.log("Reading " + aP.toString());
+            long lf = 0;
+            try (BufferedReader br = Generic_IO.getBufferedReader(aP)) {
+                reader.setStreamTokenizer(br, syntax);
+                String line = reader.readLine();    // Skip header...
+                env.log(line);                      // ... but log it.
+                line = reader.readLine();
+                while (line != null) {
+                    S_RecordID i = new S_RecordID(al);
+                    try {
+                        S_Accident_Record ar = new S_Accident_Record(i, line);
+                        S_ID_long id = new S_ID_long(al);
+                        env.data.ai2aiid.put(ar.getAccident_Index(), id);
+                        env.data.aiid2ai.put(id, ar.getAccident_Index());
+                        env.data.aiid2cid.put(id, cid);
+                        S_Record r = new S_Record(env, id);
+                        r.aRec = ar;
+                        c.data.put(id, r);
+                        if (lf % 10000 == 0) {
+                            env.env.log("loaded accident record " + lf);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace(System.err);
+                        env.env.log(ex.getMessage() + " loading accident record " + lf);
+                    }
+                    line = reader.readLine();
+                    if (al % 100000 == 0) {
+                        env.env.log("loaded " + al);
+                    }
+                    al++;
+                    lf++;
+                }
+            }
+            // Casualties
+            Path cP = Paths.get(indir.toString(), "Casualties_"
+                    + Integer.toString(year) + ".csv");
+            env.env.log("Reading " + cP.toString());
+            lf = 0;
+            try (BufferedReader br = Generic_IO.getBufferedReader(cP)) {
+                reader.setStreamTokenizer(br, syntax);
+                String line = reader.readLine();    // Skip header...
+                env.log(line);                      // ... but log it.
+                line = reader.readLine();
+                while (line != null) {
+                    S_RecordID i = new S_RecordID(cl);
+                    try {
+                        S_Casualty_Record cr = new S_Casualty_Record(i, line);
+                        S_ID_long id = env.data.ai2aiid.get(cr.getAcc_Index());
+                        S_Record r = c.data.get(id);
+                        r.cRecs.add(cr);
+                        if (lf % 10000 == 0) {
+                            env.env.log("loaded casualty record " + lf);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace(System.err);
+                        env.env.log(ex.getMessage() + " loading casualty record " + lf);
+                    }
+                    line = reader.readLine();
+                    if (cl % 100000 == 0) {
+                        env.env.log("loaded " + cl);
+                    }
+                    cl++;
+                    lf++;
+                }
+            }
+            // Vehicles
+            Path vP = Paths.get(indir.toString(), "Vehicles_"
+                    + Integer.toString(year) + ".csv");
+            env.env.log("Reading " + vP.toString());
+            lf = 0;
+            try (BufferedReader br = Generic_IO.getBufferedReader(vP)) {
+                reader.setStreamTokenizer(br, syntax);
+                String line = reader.readLine();    // Skip header...
+                env.log(line);                      // ... but log it.
+                line = reader.readLine();
+                while (line != null) {
+                    S_RecordID i = new S_RecordID(vl);
+                    try {
+                        S_Vehicle_Record vr;
+                        if (year < 2014) {
+                            vr = new S_Vehicle_Record(i, line);
+                        } else {
+                            vr = new S_Vehicle_Record_2014Plus(i, line);
+                        }
+                        S_ID_long id = env.data.ai2aiid.get(vr.getAcc_Index());
+                        S_Record r = c.data.get(id);
+                        r.vRecs.add(vr);
+                        if (lf % 10000 == 0) {
+                            env.env.log("loaded vehicle record " + lf);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace(System.err);
+                        env.env.log(ex.getMessage() + " loading vehicle record " + lf);
+                    }
+                    line = reader.readLine();
+                    if (vl % 100000 == 0) {
+                        env.env.log("loaded " + vl);
+                    }
+                    vl++;
+                    lf++;
+                }
+            }
+            env.data.cacheCollection(cid, c);
+            env.data.clearCollection(cid);
+        }
+        env.logEndTag(m);
+        env.env.closeLog(env.logID);
+        env.swapData();
+    }
+
+    boolean doLoadData = false;
 }
