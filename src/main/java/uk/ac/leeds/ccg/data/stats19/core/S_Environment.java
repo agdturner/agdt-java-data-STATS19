@@ -65,6 +65,7 @@ public class S_Environment extends Generic_MemoryManager {
      * A method to try to ensure there is enough memory to continue.
      *
      * @return
+     * @throws java.io.IOException
      */
     @Override
     public boolean checkAndMaybeFreeMemory() throws IOException {
@@ -85,6 +86,7 @@ public class S_Environment extends Generic_MemoryManager {
      * 
      * @param hoome handleOutOfMemoryError
      * @return 
+     * @throws java.io.IOException 
      */
     @Override
     public boolean swapSomeData(boolean hoome) throws IOException {
@@ -108,6 +110,7 @@ public class S_Environment extends Generic_MemoryManager {
      * Currently this just tries to cache WaAS data.
      *
      * @return
+     * @throws java.io.IOException
      */
     @Override
     public boolean swapSomeData() throws IOException {
@@ -115,7 +118,7 @@ public class S_Environment extends Generic_MemoryManager {
         if (r) {
             return r;
         } else {
-            System.out.println("No WaAS data to clear. Do some coding to try "
+            System.out.println("No data to clear. Do some coding to try "
                     + "to arrange to clear something else if needs be. If the "
                     + "program fails then try providing more memory...");
             return r;

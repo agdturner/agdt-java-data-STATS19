@@ -3739,9 +3739,9 @@ public class S_Data extends S_Object {
         cache(getCollectionPath(cid), c);
     }
 
-    public Path getCollectionPath(S_CollectionID cID) throws IOException {
+    public Path getCollectionPath(S_CollectionID cid) throws IOException {
         return Paths.get(env.files.getGeneratedDir().toString(), S_Strings.s_S
-                + cID.id + S_Strings.symbol_dot + S_Strings.s_dat);
+                + cid.id + S_Strings.symbol_dot + S_Strings.s_dat);
     }
 
     /**

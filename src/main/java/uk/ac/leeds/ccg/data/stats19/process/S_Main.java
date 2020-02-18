@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uk.ac.leeds.ccg.data.core.Data_Environment;
@@ -71,20 +72,37 @@ public class S_Main extends S_Object {
                             new Generic_Defaults(dataDir))));
             S_Main p = new S_Main(e);
             // Main switches
-            p.doLoadData = true;//false;
+            p.doLoadData = false;//true;//false;
             p.run();
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
     }
 
-    public void run() {
+    public void run() throws ClassNotFoundException {
         try {
             if (doLoadData) {
                 loadData();
+            } else {
+                env.data.env = env;
             }
             env.env.log("env.data.ai2aiid.size() " + env.data.ai2aiid.size());
             env.env.log("env.data.aiid2cid.size() " + env.data.aiid2cid.size());
+            // Count the number of accidents in each year
+            Iterator<S_CollectionID> ite = env.data.data.keySet().iterator();
+            while(ite.hasNext()) {
+                S_CollectionID cid = ite.next();
+                S_Collection c = env.data.data.get(cid);
+                if (c == null) {
+                    c = env.data.getCollection(cid);
+                }
+                env.env.log("Year=" + cid.id + ", N=" + c.data.size());                
+            }
+            // Count the number of fatalities in each year
+            // Count the number of severe injuries in each year
+            // Count the number of slight injuries in each year
+            // Count the number of accidents involving 0, 1, 2, 3, 3+ cars in each year
+            // Count the number of accidents involving death of cyclist in each year
         } catch (IOException ex) {
             Logger.getLogger(S_Main.class.getName()).log(Level.SEVERE, null, ex);
         }
