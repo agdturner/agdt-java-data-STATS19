@@ -86,18 +86,18 @@ public class S_Main extends S_Object {
             Path gendir = files.getGeneratedDir();
             Path outdir = Paths.get(gendir.toString(), S_Strings.s_Subsets);
             Files.createDirectories(outdir);
-            int chunkSize = 1000; //1024; 512; 256;
             Data_ReadCSV reader = new Data_ReadCSV(env.de);
             int startYear = 2009;
             int endYear = 2018;
-            int nYears = endYear - startYear + 1;
             int syntax = 1;
             data = new S_Data(env);
             long al = 0;
             long cl = 0;
             long vl = 0;
-            S_Collection c = new S_Collection(new S_CollectionID(0));
             for (int year = startYear; year <= endYear; year++) {
+                S_CollectionID cid =new S_CollectionID(year);
+                S_Collection c = new S_Collection(cid);
+                env.data.data.put(cid, c);
                 // Accidents
                 Path aP = Paths.get(indir.toString(), "Accidents_"
                         + Integer.toString(year) + ".csv");
@@ -176,7 +176,7 @@ public class S_Main extends S_Object {
                     env.log(line);                      // ... but log it.
                     line = reader.readLine();
                     while (line != null) {
-                        S_RecordID i = new S_RecordID(cl);                       
+                        S_RecordID i = new S_RecordID(vl);                       
                         try {
                             S_Vehicle_Record vr;
                             if (year < 2014) {
@@ -195,16 +195,19 @@ public class S_Main extends S_Object {
                             env.env.log(ex.getMessage() + " loading vehicle record " + lf);
                         }
                         line = reader.readLine();
-                            if (cl % 100000 == 0) {
-                                env.env.log("loaded " + cl);
+                            if (vl % 100000 == 0) {
+                                env.env.log("loaded " + vl);
                             }
-                        cl++;
+                        vl++;
                         lf ++;
                     }
                 }
+                env.data.cacheCollection(cid, c);
+                env.data.clearCollection(cid);
             }
             env.logEndTag(m);
             env.env.closeLog(env.logID);
+            env.swapData();
         } catch (IOException ex) {
             Logger.getLogger(S_Main.class.getName()).log(Level.SEVERE, null, ex);
         }

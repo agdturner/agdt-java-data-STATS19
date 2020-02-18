@@ -23,6 +23,7 @@ import java.util.Iterator;
 import uk.ac.leeds.ccg.data.stats19.core.S_Environment;
 import uk.ac.leeds.ccg.data.stats19.core.S_Object;
 import uk.ac.leeds.ccg.data.stats19.core.S_Strings;
+import uk.ac.leeds.ccg.data.stats19.data.id.S_CollectionID;
 import uk.ac.leeds.ccg.data.stats19.data.id.S_ID_long;
 import uk.ac.leeds.ccg.generic.io.Generic_IO;
 
@@ -39,7 +40,7 @@ public class S_Data extends S_Object {
     /**
      * The main STATS19 data store. Keys are Collection IDs.
      */
-    public HashMap<Short, S_Collection> data;
+    public HashMap<S_CollectionID, S_Collection> data;
 
     /**
      * Looks up from an Accident Index to and Accident Index ID.
@@ -3670,23 +3671,23 @@ public class S_Data extends S_Object {
 
     /**
      *
-     * @param collectionID
+     * @param cid
      * @return
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public S_Collection getCollection(short collectionID)
+    public S_Collection getCollection(S_CollectionID cid)
             throws IOException, ClassNotFoundException {
-        S_Collection r = data.get(collectionID);
+        S_Collection r = data.get(cid);
         if (r == null) {
-            r = (S_Collection) loadSubsetCollection(collectionID);
-            data.put(collectionID, r);
+            r = (S_Collection) loadCollection(cid);
+            data.put(cid, r);
         }
         return r;
     }
 
-    public void clearCollection(short cID) {
-        data.put(cID, null);
+    public void clearCollection(S_CollectionID cid) {
+        data.put(cid, null);
     }
 
     public S_Data(S_Environment se) {
@@ -3697,12 +3698,12 @@ public class S_Data extends S_Object {
     }
 
     public boolean clearSomeData() throws IOException {
-        Iterator<Short> ite = data.keySet().iterator();
+        Iterator<S_CollectionID> ite = data.keySet().iterator();
         while (ite.hasNext()) {
-            short cID = ite.next();
-            S_Collection c = data.get(cID);
-            cacheSubsetCollection(cID, c);
-            data.put(cID, null);
+            S_CollectionID cid = ite.next();
+            S_Collection c = data.get(cid);
+            cacheCollection(cid, c);
+            data.put(cid, null);
             return true;
         }
         return false;
@@ -3710,12 +3711,12 @@ public class S_Data extends S_Object {
 
     public int clearAllData() throws IOException {
         int r = 0;
-        Iterator<Short> ite = data.keySet().iterator();
+        Iterator<S_CollectionID> ite = data.keySet().iterator();
         while (ite.hasNext()) {
-            short cID = ite.next();
-            S_Collection c = data.get(cID);
-            cacheSubsetCollection(cID, c);
-            data.put(cID, null);
+            S_CollectionID cid = ite.next();
+            S_Collection c = data.get(cid);
+            cacheCollection(cid, c);
+            data.put(cid, null);
             r++;
         }
         return r;
@@ -3723,31 +3724,33 @@ public class S_Data extends S_Object {
 
     /**
      *
-     * @param cID the value of collectionID
-     * @param o the value of o
+     * @param cid the S_CollectionID
+     * @param c the S_Collection
+     * @throws java.io.IOException
      */
-    public void cacheSubsetCollection(short cID, Object o) throws IOException {
-        cache(getSubsetCollection(cID), o);
+    public void cacheCollection(S_CollectionID cid, S_Collection c)
+            throws IOException {
+        cache(getCollectionPath(cid), c);
     }
 
-    public Path getSubsetCollection(short cID) throws IOException {
-        return Paths.get(env.files.getGeneratedDir().toString(),
-                S_Strings.s_STATS19 + S_Strings.symbol_underscore
-                + cID + S_Strings.symbol_dot + S_Strings.s_dat);
+    public Path getCollectionPath(S_CollectionID cID) throws IOException {
+        return Paths.get(env.files.getGeneratedDir().toString(), S_Strings.s_S
+                + cID.id + S_Strings.symbol_dot + S_Strings.s_dat);
     }
 
     /**
      *
-     * @param cID the value of collectionID
+     * @param cid The S_CollectionID
      * @return
      */
-    public Object loadSubsetCollection(short cID) throws IOException, ClassNotFoundException {
-        return load(getSubsetCollection(cID));
+    public S_Collection loadCollection(S_CollectionID cid) throws IOException,
+            ClassNotFoundException {
+        return (S_Collection) load(getCollectionPath(cid));
     }
 
     /**
      *
-     * @param f the Path to load Object result from.
+     * @param f the Path to load from.
      * @return
      */
     protected Object load(Path f) throws IOException, ClassNotFoundException {

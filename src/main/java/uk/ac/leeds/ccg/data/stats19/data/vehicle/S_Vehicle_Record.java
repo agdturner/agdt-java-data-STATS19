@@ -63,7 +63,7 @@ public class S_Vehicle_Record extends Data_Record {
     }
 
     @Override
-    public S_RecordID getID() {
+    public S_RecordID getId() {
         return (S_RecordID) id;
     }
 
