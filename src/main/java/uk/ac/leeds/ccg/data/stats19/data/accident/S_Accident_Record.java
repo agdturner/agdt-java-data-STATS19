@@ -6,6 +6,12 @@ package uk.ac.leeds.ccg.data.stats19.data.accident;
 import uk.ac.leeds.ccg.data.Data_Record;
 import uk.ac.leeds.ccg.data.stats19.data.id.S_RecordID;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/230590/stats19.pdf
@@ -28,7 +34,7 @@ public class S_Accident_Record extends Data_Record {
     protected Byte Accident_Severity;
     protected Integer Number_of_Vehicles;
     protected Integer Number_of_Casualties;    
-    protected String Date;
+    protected LocalDate date;
     protected String Time;
     protected Byte Day_of_Week;
     protected Short Local_Authority_District;
@@ -176,11 +182,14 @@ public class S_Accident_Record extends Data_Record {
         }
     }
 
-    protected final void initDate(String s) {
+    protected final void initDate(String s) throws ParseException {
         if (!s.trim().isEmpty()) {
-            Date = s;
+            //DateFormat sourceFormat = new SimpleDateFormat("dd/MM/yyyy");
+            //Date d = sourceFormat.parse(s); 
+            DateTimeFormatter f = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            date = LocalDate.parse(s, f);
         } else {
-            Date = null;
+            date = null;
         }
     }
 
@@ -400,8 +409,8 @@ public class S_Accident_Record extends Data_Record {
         return Number_of_Casualties;
     }
 
-    public String getDate() {
-        return Date;
+    public LocalDate getDate() {
+        return date;
     }
 
     public Byte getDay_of_Week() {

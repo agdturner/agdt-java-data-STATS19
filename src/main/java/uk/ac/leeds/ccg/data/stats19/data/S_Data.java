@@ -16,15 +16,20 @@
 package uk.ac.leeds.ccg.data.stats19.data;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TreeMap;
 import uk.ac.leeds.ccg.data.stats19.core.S_Environment;
 import uk.ac.leeds.ccg.data.stats19.core.S_Object;
 import uk.ac.leeds.ccg.data.stats19.core.S_Strings;
 import uk.ac.leeds.ccg.data.stats19.data.id.S_CollectionID;
 import uk.ac.leeds.ccg.data.stats19.data.id.S_ID_long;
+import uk.ac.leeds.ccg.generic.io.Generic_FileStore;
 import uk.ac.leeds.ccg.generic.io.Generic_IO;
 
 /**
@@ -37,10 +42,12 @@ public class S_Data extends S_Object {
 
     private static final long serialVersionUID = 1L;
 
+    public final Generic_FileStore fs;
+
     /**
      * The main STATS19 data store. Keys are Collection IDs.
      */
-    public HashMap<S_CollectionID, S_Collection> data;
+    public TreeMap<S_CollectionID, S_Collection> data;
 
     /**
      * Looks up from an Accident Index to and Accident Index ID.
@@ -56,6 +63,16 @@ public class S_Data extends S_Object {
      * Looks up from an Accident Index ID to a Collection ID.
      */
     public final HashMap<S_ID_long, S_CollectionID> aiid2cid;
+
+    /**
+     * Looks up from a Collection ID to a date.
+     */
+    public final HashMap<S_CollectionID, LocalDate> cid2date;
+
+    /**
+     * Looks up from a date to a Collection ID.
+     */
+    public final HashMap<LocalDate, S_CollectionID> date2cid;
 
     /**
      * Police Force
@@ -3674,6 +3691,23 @@ public class S_Data extends S_Object {
         return hatid2hat;
     }
 
+    public S_Collection getCollectionAddIfNecessary(LocalDate date)
+            throws IOException, ClassNotFoundException {
+        if (date2cid.containsKey(date)) {
+            S_CollectionID cid = date2cid.get(date);
+            return getCollection(cid);
+        } else {
+            S_CollectionID cid = new S_CollectionID(date2cid.size());
+            date2cid.put(date, cid);
+            cid2date.put(cid, date);
+            S_Collection c = new S_Collection(cid);
+            data.put(cid, c);
+            fs.addDir();
+            return c;
+        }
+
+    }
+
     /**
      *
      * @param cid
@@ -3685,22 +3719,53 @@ public class S_Data extends S_Object {
             throws IOException, ClassNotFoundException {
         S_Collection r = data.get(cid);
         if (r == null) {
-            r = (S_Collection) loadCollection(cid);
+            r = loadCollection(cid);
             data.put(cid, r);
         }
         return r;
+    }
+
+    /**
+     *
+     * @param date The date for which the collection is wanted
+     * @return The collection for the date, or {@code null} if there is no
+     * collection for the date. It could be that there are no personal injury
+     * road accidents on a day in Great Britain in the future, but this has yet
+     * to happen since records began!
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public S_Collection getCollection(Date date)
+            throws IOException, ClassNotFoundException {
+        S_CollectionID cid = date2cid.get(date);
+        if (cid == null) {
+            return null;
+        } else {
+            return data.get(cid);
+        }
     }
 
     public void clearCollection(S_CollectionID cid) {
         data.put(cid, null);
     }
 
-    public S_Data(S_Environment se) {
+    public S_Data(S_Environment se) throws IOException, Exception {
         super(se);
-        data = new HashMap<>();
+        String name = "Collections";
+        Path dir = se.files.getGeneratedDir();
+        Path p = Paths.get(dir.toString(), name);
+        if (Files.exists(p)) {
+            fs = new Generic_FileStore(p);
+        } else {
+            short n = 100;
+            fs = new Generic_FileStore(p.getParent(), name, n);
+        }
+        data = new TreeMap<>();
         ai2aiid = new HashMap<>();
         aiid2ai = new HashMap<>();
         aiid2cid = new HashMap<>();
+        cid2date = new HashMap<>();
+        date2cid = new HashMap<>();
     }
 
     public boolean clearSomeData() throws IOException {
@@ -3740,7 +3805,12 @@ public class S_Data extends S_Object {
     }
 
     public Path getCollectionPath(S_CollectionID cid) throws IOException {
-        return Paths.get(env.files.getGeneratedDir().toString(), S_Strings.s_S
+
+        if (cid.id == 100) {
+            int degug = 1;
+        }
+
+        return Paths.get(fs.getPath(cid.id).toString(), S_Strings.s_S
                 + cid.id + S_Strings.symbol_dot + S_Strings.s_dat);
     }
 
@@ -3748,6 +3818,8 @@ public class S_Data extends S_Object {
      *
      * @param cid The S_CollectionID
      * @return
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
      */
     public S_Collection loadCollection(S_CollectionID cid) throws IOException,
             ClassNotFoundException {
@@ -3769,12 +3841,38 @@ public class S_Data extends S_Object {
 
     /**
      *
+     * @throws java.io.IOException
+     */
+    public void swapCollections() throws IOException {
+        data.keySet().stream().forEach(i -> {
+            try {
+                S_Collection c = data.get(i);
+                if (c != null) {
+                    cacheCollection(i, data.get(i));
+                    data.put(i, null);
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
+        });
+//        Iterator<S_CollectionID> ite = data.keySet().iterator();
+//        while (ite.hasNext()) {
+//            S_CollectionID cid = ite.next();
+//            S_Collection c = data.get(cid);
+//            cacheCollection(cid, c);
+//            data.put(cid, null);
+//        }
+    }
+
+    /**
+     *
      * @param f the value of cf
      * @param o the value of o
      */
     protected void cache(Path f, Object o) throws IOException {
         String m = "cache " + f.toString();
         env.logStartTag(m);
+        Files.createDirectories(f.getParent());
         Generic_IO.writeObject(o, f);
         env.logEndTag(m);
     }

@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import uk.ac.leeds.ccg.data.core.Data_Environment;
 import uk.ac.leeds.ccg.data.format.Data_ReadCSV;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
@@ -96,19 +96,25 @@ public class S_Main extends S_Object {
                 if (c == null) {
                     c = env.data.getCollection(cid);
                 }
-                env.env.log("Year=" + cid.id + ", N=" + c.data.size());                
+                
+                env.env.log("Date=" + env.data.cid2date.get(cid).toString() + ", N=" + c.data.size());                
             }
             // Count the number of fatalities in each year
             // Count the number of severe injuries in each year
             // Count the number of slight injuries in each year
             // Count the number of accidents involving 0, 1, 2, 3, 3+ cars in each year
             // Count the number of accidents involving death of cyclist in each year
-        } catch (IOException ex) {
-            Logger.getLogger(S_Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
         }
     }
 
-    public void loadData() throws IOException {
+    /**
+     * Loads source csv data files into collections. Each collections is a 
+     * collection for a day.  
+     * @throws IOException 
+     */
+    public void loadData() throws IOException, Exception {
         String m = "loadData";
         env.logStartTag(m);
         Path indir = files.getInputDir();
@@ -118,15 +124,12 @@ public class S_Main extends S_Object {
         Data_ReadCSV reader = new Data_ReadCSV(env.de);
         int startYear = 2009;
         int endYear = 2018;
-        int syntax = 1;
+        int syntax = 5;
         data = new S_Data(env);
         long al = 0;
         long cl = 0;
         long vl = 0;
         for (int year = startYear; year <= endYear; year++) {
-            S_CollectionID cid = new S_CollectionID(year);
-            S_Collection c = new S_Collection(cid);
-            env.data.data.put(cid, c);
             // Accidents
             Path aP = Paths.get(indir.toString(), "Accidents_"
                     + Integer.toString(year) + ".csv");
@@ -144,7 +147,9 @@ public class S_Main extends S_Object {
                         S_ID_long id = new S_ID_long(al);
                         env.data.ai2aiid.put(ar.getAccident_Index(), id);
                         env.data.aiid2ai.put(id, ar.getAccident_Index());
-                        env.data.aiid2cid.put(id, cid);
+                        LocalDate date = ar.getDate();
+                        S_Collection c = env.data.getCollectionAddIfNecessary(date);
+                        env.data.aiid2cid.put(id, c.id);
                         S_Record r = new S_Record(env, id);
                         r.aRec = ar;
                         c.data.put(id, r);
@@ -177,8 +182,9 @@ public class S_Main extends S_Object {
                     S_RecordID i = new S_RecordID(cl);
                     try {
                         S_Casualty_Record cr = new S_Casualty_Record(i, line);
-                        S_ID_long id = env.data.ai2aiid.get(cr.getAcc_Index());
-                        S_Record r = c.data.get(id);
+                        S_ID_long aiid = env.data.ai2aiid.get(cr.getAcc_Index());
+                        S_CollectionID cid = env.data.aiid2cid.get(aiid);                        
+                        S_Record r = env.data.data.get(cid).data.get(aiid);
                         r.cRecs.add(cr);
                         if (lf % 10000 == 0) {
                             env.env.log("loaded casualty record " + lf);
@@ -214,8 +220,9 @@ public class S_Main extends S_Object {
                         } else {
                             vr = new S_Vehicle_Record_2014Plus(i, line);
                         }
-                        S_ID_long id = env.data.ai2aiid.get(vr.getAcc_Index());
-                        S_Record r = c.data.get(id);
+                        S_ID_long aiid = env.data.ai2aiid.get(vr.getAcc_Index());
+                        S_CollectionID cid = env.data.aiid2cid.get(aiid);                        
+                        S_Record r = env.data.data.get(cid).data.get(aiid);
                         r.vRecs.add(vr);
                         if (lf % 10000 == 0) {
                             env.env.log("loaded vehicle record " + lf);
@@ -232,8 +239,7 @@ public class S_Main extends S_Object {
                     lf++;
                 }
             }
-            env.data.cacheCollection(cid, c);
-            env.data.clearCollection(cid);
+            env.data.swapCollections();
         }
         env.logEndTag(m);
         env.env.closeLog(env.logID);
