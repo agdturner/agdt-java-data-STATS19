@@ -45,4 +45,12 @@ public class S_Files extends Data_Files {
         Files.createDirectories(r);
         return r;
     }
+    
+    /**
+     * @return A path for a file for storing the number of accidents in each 
+     * year, month, day.
+     */
+    public Path getNymd(String name) throws IOException{
+        return Paths.get(getGeneratedDir().toString(), name + "_nymd.dat");
+    }
 }
