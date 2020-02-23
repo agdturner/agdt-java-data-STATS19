@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
@@ -52,17 +51,17 @@ public class S_Data extends S_Object {
     /**
      * Looks up from an Accident Index to and Accident Index ID.
      */
-    public final HashMap<String, S_ID_long> ai2aiid;
+    public HashMap<String, S_ID_long> ai2aiid;
 
     /**
      * Looks up from an Accident Index ID to and Accident Index.
      */
-    public final HashMap<S_ID_long, String> aiid2ai;
+    public HashMap<S_ID_long, String> aiid2ai;
 
     /**
      * Looks up from an Accident Index ID to a Collection ID.
      */
-    public final HashMap<S_ID_long, S_CollectionID> aiid2cid;
+    public HashMap<S_ID_long, S_CollectionID> aiid2cid;
 
     /**
      * Looks up from a Collection ID to a date.
@@ -3732,10 +3731,10 @@ public class S_Data extends S_Object {
      * collection for the date. It could be that there are no personal injury
      * road accidents on a day in Great Britain in the future, but this has yet
      * to happen since records began!
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException If encountered.
+     * @throws ClassNotFoundException If encountered.
      */
-    public S_Collection getCollection(Date date)
+    public S_Collection getCollection(LocalDate date)
             throws IOException, ClassNotFoundException {
         S_CollectionID cid = date2cid.get(date);
         if (cid == null) {
@@ -3830,6 +3829,8 @@ public class S_Data extends S_Object {
      *
      * @param f the Path to load from.
      * @return
+     * @throws java.io.IOException If encountered.
+     * @throws java.lang.ClassNotFoundException If encountered.
      */
     protected Object load(Path f) throws IOException, ClassNotFoundException {
         String m = "load " + f.toString();
@@ -3868,6 +3869,7 @@ public class S_Data extends S_Object {
      *
      * @param f the value of cf
      * @param o the value of o
+     * @throws java.io.IOException If encountered.
      */
     protected void cache(Path f, Object o) throws IOException {
         String m = "cache " + f.toString();

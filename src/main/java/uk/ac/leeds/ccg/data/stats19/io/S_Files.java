@@ -45,6 +45,31 @@ public class S_Files extends Data_Files {
         Files.createDirectories(r);
         return r;
     }
+
+    /**
+     * @return A path to a file for storing the accident to accident id lookup. 
+     * @throws IOException If encountered.
+     */
+    public Path getAi2aiid() throws IOException {
+        return Paths.get(getGeneratedDir().toString(), "ai2aiid.dat");
+    }
+    
+    /**
+     * @return A path to a file for storing the accident id to accident lookup. 
+     * @throws IOException If encountered.
+     */
+    public Path getAiid2ai() throws IOException {
+        return Paths.get(getGeneratedDir().toString(), "aiid2ai.dat");
+    }
+    
+    /**
+     * @return A path to a file for storing the accident id to collection id
+     * lookup. 
+     * @throws IOException If encountered.
+     */
+    public Path getAiid2cid() throws IOException {
+        return Paths.get(getGeneratedDir().toString(), "aiid2cid.dat");
+    }
     
     /**
      * @return A path for a file for storing the number of accidents in each 
