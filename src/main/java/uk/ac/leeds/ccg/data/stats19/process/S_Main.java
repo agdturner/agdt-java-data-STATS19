@@ -72,9 +72,8 @@ public class S_Main extends S_Object {
         try {
             Path dataDir = Paths.get(System.getProperty("user.home"),
                     S_Strings.s_data);
-            S_Environment e = new S_Environment(
-                    new Data_Environment(new Generic_Environment(
-                            new Generic_Defaults(dataDir))));
+            S_Environment e = new S_Environment(new Data_Environment(
+                    new Generic_Environment(new Generic_Defaults(dataDir))));
             S_Main p = new S_Main(e);
             // Main switches
             //p.doLoadData = true;
@@ -95,225 +94,35 @@ public class S_Main extends S_Object {
                 env.data.env = env;
                 Generic_IO.writeObject(env.data.ai2aiid, files.getAi2aiid());
             }
-            String name0 = "Leeds_"; // 203
-            //String name0 = ""; // 203
+            // Ouput count
+            String name0 = "Total";
             if (doAccidentsByYearAndMonth) {
-                String name = name0 + "Accident";
-                /**
-                 * Table and plot the number of accidents per month for each
-                 * year.
-                 */
-                Path nymdp = files.getNymd(name);
-                TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>> nymd;
-                if (Files.exists(nymdp)) {
-                    nymd = (TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>>) Generic_IO.readObject(nymdp);
-                } else {
-                    nymd = new TreeMap<>();
-                    Iterator<S_CollectionID> ite = env.data.data.keySet().iterator();
-                    while (ite.hasNext()) {
-                        S_CollectionID cid = ite.next();
-                        LocalDate date = env.data.cid2date.get(cid);
-                        Integer year = date.getYear();
-                        TreeMap<Integer, TreeMap<Integer, Integer>> nmd;
-                        if (nymd.containsKey(year)) {
-                            nmd = nymd.get(year);
-                        } else {
-                            nmd = new TreeMap<>();
-                            nymd.put(year, nmd);
-                        }
-                        Integer month = date.getMonthValue();
-                        TreeMap<Integer, Integer> nd;
-                        if (nmd.containsKey(month)) {
-                            nd = nmd.get(month);
-                        } else {
-                            nd = new TreeMap<>();
-                            nmd.put(month, nd);
-                        }
-                        Integer day = date.getDayOfMonth();
-                        S_Collection c = env.data.data.get(cid);
-                        if (c == null) {
-                            c = env.data.getCollection(cid);
-                        }
-                        Iterator<S_ID_long> ite4 = c.data.keySet().iterator();
-                        //int n = c.data.size();
-                        while (ite4.hasNext()) {
-                            S_Record sr = c.data.get(ite4.next());
-                            if (sr.aRec.getLocal_Authority_District() == 203) {
-                                Generic_Collections.addToCount(nd, day, 1);
-                            }
-                        }
-                    }
-                    Generic_IO.writeObject(nymd, nymdp);
-                }
-                printTable(name, nymd);
+                outputAccidentsByYearAndMonth(name0);
             }
             if (doDeathsByYearAndMonth) {
-                /**
-                 * Death count (by year and month)
-                 * <ul>
-                 * <li>Year,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec</li>
-                 * <li>2009,202,178,175,196,185,177,197,220,179,176,175,162</li>
-                 * <li>2010,131,133,150,132,177,158,140,197,175,178,159,120</li>
-                 * <li>2011,157,139,149,164,146,177,150,178,166,147,172,156</li>
-                 * <li>2012,136,120,158,124,144,134,161,147,162,136,145,187</li>
-                 * <li>2013,124,95,117,140,161,138,163,151,154,157,157,156</li>
-                 * <li>2014,3,3,2,3,0,4,3,3,0,1,1,6</li>
-                 * <li>2015,0,4,3,5,4,2,3,3,3,1,8,4</li>
-                 * <li>2016,2,6,6,4,6,8,10,5,6,3,4,0</li>
-                 * <li>2017,1,2,3,2,0,3,6,10,5,3,5,5</li>
-                 * <li>2018,4,3,3,3,2,1,3,4,1,2,6,1</li>
-                 * </ul>
-                 */
-                String name = name0 + "Death";
-                /**
-                 * Table and plot the number of fatalities per month for each
-                 * year.
-                 */
-                Path nymdp = files.getNymd(name);
-                TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>> nymd;
-                if (Files.exists(nymdp)) {
-                    nymd = (TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>>) Generic_IO.readObject(nymdp);
-                } else {
-                    nymd = new TreeMap<>();
-                    Iterator<S_CollectionID> ite = env.data.data.keySet().iterator();
-                    while (ite.hasNext()) {
-                        S_CollectionID cid = ite.next();
-                        LocalDate date = env.data.cid2date.get(cid);
-                        Integer year = date.getYear();
-                        TreeMap<Integer, TreeMap<Integer, Integer>> nmd;
-                        if (nymd.containsKey(year)) {
-                            nmd = nymd.get(year);
-                        } else {
-                            nmd = new TreeMap<>();
-                            nymd.put(year, nmd);
-                        }
-                        Integer month = date.getMonthValue();
-                        TreeMap<Integer, Integer> nd;
-                        if (nmd.containsKey(month)) {
-                            nd = nmd.get(month);
-                        } else {
-                            nd = new TreeMap<>();
-                            nmd.put(month, nd);
-                        }
-                        Integer day = date.getDayOfMonth();
-                        S_Collection c = env.data.data.get(cid);
-                        if (c == null) {
-                            c = env.data.getCollection(cid);
-                        }
-                        Iterator<S_ID_long> ite4 = c.data.keySet().iterator();
-                        int n = 0;
-                        while (ite4.hasNext()) {
-                            S_Record sr = c.data.get(ite4.next());
-                            if (sr.aRec.getLocal_Authority_District() == 203) {
-                                //if (sr.aRec.getAccident_Severity() == 1) {
-                                Iterator<S_Casualty_Record> ite5 = sr.cRecs.iterator();
-                                while (ite5.hasNext()) {
-                                    if (ite5.next().getCasualty_Severity() == 1) {
-                                        n += 1;
-                                    }
-                                }
-                                //}
-                            }
-                        }
-                        Generic_Collections.addToCount(nd, day, n);
-                        env.env.log("date=" + date.toString() + ", n=" + n);
-                    }
-                    Generic_IO.writeObject(nymd, nymdp);
-                }
-                printTable(name, nymd);
+                outputDeathsByYearAndMonth(name0);
             }
             if (doCyclistByYearAndMonth) {
-                String name = name0 + "Cyclist_casualties";
-                /**
-                 * Table and plot the number of cyclist casualties per month for
-                 * each year.
-                 */
-                Path nymdp = files.getNymd(name);
-                TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>> nymd;
-                if (Files.exists(nymdp)) {
-                    nymd = (TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>>) Generic_IO.readObject(nymdp);
-                } else {
-                    nymd = new TreeMap<>();
-                    Iterator<S_CollectionID> ite = env.data.data.keySet().iterator();
-                    while (ite.hasNext()) {
-                        S_CollectionID cid = ite.next();
-                        LocalDate date = env.data.cid2date.get(cid);
-                        Integer year = date.getYear();
-                        TreeMap<Integer, TreeMap<Integer, Integer>> nmd;
-                        if (nymd.containsKey(year)) {
-                            nmd = nymd.get(year);
-                        } else {
-                            nmd = new TreeMap<>();
-                            nymd.put(year, nmd);
-                        }
-                        Integer month = date.getMonthValue();
-                        TreeMap<Integer, Integer> nd;
-                        if (nmd.containsKey(month)) {
-                            nd = nmd.get(month);
-                        } else {
-                            nd = new TreeMap<>();
-                            nmd.put(month, nd);
-                        }
-                        Integer day = date.getDayOfMonth();
-                        S_Collection c = env.data.data.get(cid);
-                        if (c == null) {
-                            c = env.data.getCollection(cid);
-                        }
-                        Iterator<S_ID_long> ite4 = c.data.keySet().iterator();
-                        int n = 0;
-                        while (ite4.hasNext()) {
-                            S_Record sr = c.data.get(ite4.next());
-                            if (sr.aRec.getLocal_Authority_District() == 203) {
-                                Iterator<S_Casualty_Record> ite5 = sr.cRecs.iterator();
-                                while (ite5.hasNext()) {
-                                    S_Casualty_Record cr = ite5.next();
-                                    //if (cr.getCasualty_Severity() == 1) {
-                                    Short vrr = cr.getVehicle_Reference();
-                                    Iterator<S_Vehicle_Record> ite6 = sr.vRecs.iterator();
-                                    while (ite6.hasNext()) {
-                                        S_Vehicle_Record vr = ite6.next();
-                                        if (Objects.equals(vr.getVehicle_Reference(), vrr)) {
-                                            if (vr.getVehicle_Type() == 1) {
-                                                n += 1;
-                                            }
-                                        }
-                                    }
-                                    //if (cr.getVehicle_Reference()Casualty_Severity() == 1) {
-                                    //    n += 1;
-                                    //}
-                                    //}
-                                }
-                            }
-//                            if (sr.aRec.getAccident_Severity() == 1) {
-//                                Iterator<S_Casualty_Record> ite5 = sr.cRecs.iterator();
-//                                while (ite5.hasNext()) {
-//                                    if (ite5.next().getCasualty_Severity() == 1) {
-//                                        n +=1;
-//                                    }
-//                                }                        
-//                            }
-//                            boolean allCycles = true;
-//                            Iterator<S_Vehicle_Record> itev = sr.vRecs.iterator();
-//                            while (itev.hasNext()) {
-//                                if (itev.next().getVehicle_Type() != 1) {
-//                                    allCycles = false;
-//                                }
-//                            }
-//                            if (!allCycles) {
-//                                
-//                            }
-                        }
-                        Generic_Collections.addToCount(nd, day, n);
-                        env.env.log("date=" + date.toString() + ", n=" + n);
-                    }
-                    Generic_IO.writeObject(nymd, nymdp);
-                }
-                printTable(name, nymd);
+                outputCyclistByYearAndMonth(name0);
             }
-            // Count the number of severe injuries in each year
-            // Count the number of slight injuries in each year
-            // Count the number of accidents involving 0, 1, 2, 3, 3+ cars in each year
-            // Count the number of accidents involving death of cyclist in each year
+            // Output counts by Local Authority District
+            Iterator<Short> ite = env.data.getLadid2lad().keySet().iterator();
+            while (ite.hasNext()) {
+                Short ladid = ite.next();
+                name0 = env.data.getLadid2lad().get(ladid);
+                if (doAccidentsByYearAndMonth) {
+                    outputAccidentsByYearAndMonth(ladid, name0);
+                }
+                if (doDeathsByYearAndMonth) {
+                    outputDeathsByYearAndMonth(ladid, name0);
+                }
+                if (doCyclistByYearAndMonth) {
+                    outputCyclistByYearAndMonth(ladid, name0);
+                }           // Count the number of severe injuries in each year
+                // Count the number of slight injuries in each year
+                // Count the number of accidents involving 0, 1, 2, 3, 3+ cars in each year
+                // Count the number of accidents involving death of cyclist in each year
+            }
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
@@ -463,6 +272,12 @@ public class S_Main extends S_Object {
         env.swapData();
     }
 
+    /**
+     * General method for printing a table of data.
+     *
+     * @param name
+     * @param nymd
+     */
     public void printTable(String name, TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>> nymd) {
         env.env.log("");
         env.env.log(name + " count (by year and month)");
@@ -509,6 +324,390 @@ public class S_Main extends S_Object {
             }
             env.env.log(s);
         }
+    }
+
+    /**
+     * Output Accident count (by year and month).
+     *
+     * @param ladid Local Authority District ID
+     * @param name0 Name for the Path.
+     * @throws IOException If encountered.
+     * @throws ClassNotFoundException If encountered.
+     */
+    public void outputAccidentsByYearAndMonth(Short ladid, String name0) throws IOException,
+            ClassNotFoundException {
+        String name = "Accident";
+        /**
+         * Table the number of accidents per month for each year.
+         */
+        Path p = files.getNymd(name0, name);
+        TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>> nymd;
+        if (Files.exists(p)) {
+            nymd = (TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>>) Generic_IO.readObject(p);
+        } else {
+            Files.createDirectories(p.getParent());
+            nymd = new TreeMap<>();
+            Iterator<S_CollectionID> ite = env.data.data.keySet().iterator();
+            while (ite.hasNext()) {
+                S_CollectionID cid = ite.next();
+                LocalDate date = env.data.cid2date.get(cid);
+                Integer year = date.getYear();
+                TreeMap<Integer, TreeMap<Integer, Integer>> nmd;
+                if (nymd.containsKey(year)) {
+                    nmd = nymd.get(year);
+                } else {
+                    nmd = new TreeMap<>();
+                    nymd.put(year, nmd);
+                }
+                Integer month = date.getMonthValue();
+                TreeMap<Integer, Integer> nd;
+                if (nmd.containsKey(month)) {
+                    nd = nmd.get(month);
+                } else {
+                    nd = new TreeMap<>();
+                    nmd.put(month, nd);
+                }
+                Integer day = date.getDayOfMonth();
+                S_Collection c = env.data.data.get(cid);
+                if (c == null) {
+                    c = env.data.getCollection(cid);
+                }
+                Iterator<S_ID_long> ite4 = c.data.keySet().iterator();
+                //int n = c.data.size();
+                while (ite4.hasNext()) {
+                    S_Record sr = c.data.get(ite4.next());
+                    if (Objects.equals(sr.aRec.getLocal_Authority_District(), ladid)) {
+                        Generic_Collections.addToCount(nd, day, 1);
+                    }
+                }
+            }
+            Generic_IO.writeObject(nymd, p);
+        }
+        printTable(name, nymd);
+    }
+
+    /**
+     * Output Accident count (by year and month).
+     *
+     * @param name0 Name for the Path.
+     * @throws IOException If encountered.
+     * @throws ClassNotFoundException If encountered.
+     */
+    public void outputAccidentsByYearAndMonth(String name0) throws IOException,
+            ClassNotFoundException {
+        String name = "Accident";
+        /**
+         * Table the number of accidents per month for each year.
+         */
+        Path p = files.getNymd(name0, name);
+        TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>> nymd;
+        if (Files.exists(p)) {
+            nymd = (TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>>) Generic_IO.readObject(p);
+        } else {
+            Files.createDirectories(p.getParent());
+            nymd = new TreeMap<>();
+            Iterator<S_CollectionID> ite = env.data.data.keySet().iterator();
+            while (ite.hasNext()) {
+                S_CollectionID cid = ite.next();
+                LocalDate date = env.data.cid2date.get(cid);
+                Integer year = date.getYear();
+                TreeMap<Integer, TreeMap<Integer, Integer>> nmd;
+                if (nymd.containsKey(year)) {
+                    nmd = nymd.get(year);
+                } else {
+                    nmd = new TreeMap<>();
+                    nymd.put(year, nmd);
+                }
+                Integer month = date.getMonthValue();
+                TreeMap<Integer, Integer> nd;
+                if (nmd.containsKey(month)) {
+                    nd = nmd.get(month);
+                } else {
+                    nd = new TreeMap<>();
+                    nmd.put(month, nd);
+                }
+                Integer day = date.getDayOfMonth();
+                S_Collection c = env.data.data.get(cid);
+                if (c == null) {
+                    c = env.data.getCollection(cid);
+                }
+                Iterator<S_ID_long> ite4 = c.data.keySet().iterator();
+                //int n = c.data.size();
+                while (ite4.hasNext()) {
+                    S_Record sr = c.data.get(ite4.next());
+                    //if (Objects.equals(sr.aRec.getLocal_Authority_District(), ladid)) {
+                    Generic_Collections.addToCount(nd, day, 1);
+                    //}
+                }
+            }
+            Generic_IO.writeObject(nymd, p);
+        }
+        printTable(name, nymd);
+    }
+
+    /**
+     * Output Death count (by year and month).
+     *
+     * @param ladid Local Authority District ID
+     * @param name0 Name for the Path.
+     * @throws IOException If encountered.
+     * @throws ClassNotFoundException If encountered.
+     */
+    public void outputDeathsByYearAndMonth(Short ladid, String name0) throws IOException,
+            ClassNotFoundException {
+        String name = "Death";
+        Path p = files.getNymd(name0, name);
+        TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>> nymd;
+        if (Files.exists(p)) {
+            nymd = (TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>>) Generic_IO.readObject(p);
+        } else {
+            Files.createDirectories(p.getParent());
+            nymd = new TreeMap<>();
+            Iterator<S_CollectionID> ite = env.data.data.keySet().iterator();
+            while (ite.hasNext()) {
+                S_CollectionID cid = ite.next();
+                LocalDate date = env.data.cid2date.get(cid);
+                Integer year = date.getYear();
+                TreeMap<Integer, TreeMap<Integer, Integer>> nmd;
+                if (nymd.containsKey(year)) {
+                    nmd = nymd.get(year);
+                } else {
+                    nmd = new TreeMap<>();
+                    nymd.put(year, nmd);
+                }
+                Integer month = date.getMonthValue();
+                TreeMap<Integer, Integer> nd;
+                if (nmd.containsKey(month)) {
+                    nd = nmd.get(month);
+                } else {
+                    nd = new TreeMap<>();
+                    nmd.put(month, nd);
+                }
+                Integer day = date.getDayOfMonth();
+                S_Collection c = env.data.data.get(cid);
+                if (c == null) {
+                    c = env.data.getCollection(cid);
+                }
+                Iterator<S_ID_long> ite4 = c.data.keySet().iterator();
+                int n = 0;
+                while (ite4.hasNext()) {
+                    S_Record sr = c.data.get(ite4.next());
+
+                    if (Objects.equals(sr.aRec.getLocal_Authority_District(), ladid)) {
+                        //if (sr.aRec.getAccident_Severity() == 1) {
+                        Iterator<S_Casualty_Record> ite5 = sr.cRecs.iterator();
+                        while (ite5.hasNext()) {
+                            if (ite5.next().getCasualty_Severity() == 1) {
+                                n += 1;
+                            }
+                        }
+                        //}
+                    }
+                }
+                Generic_Collections.addToCount(nd, day, n);
+                env.env.log("date=" + date.toString() + ", n=" + n);
+            }
+            Generic_IO.writeObject(nymd, p);
+        }
+        printTable(name, nymd);
+    }
+
+    /**
+     * Output Death count (by year and month).
+     *
+     * @param name0 Name for the Path.
+     * @throws IOException If encountered.
+     * @throws ClassNotFoundException If encountered.
+     */
+    public void outputDeathsByYearAndMonth(String name0) throws IOException,
+            ClassNotFoundException {
+        String name = "Death";
+        Path p = files.getNymd(name0, name);
+        TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>> nymd;
+        if (Files.exists(p)) {
+            nymd = (TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>>) Generic_IO.readObject(p);
+        } else {
+            Files.createDirectories(p.getParent());
+            nymd = new TreeMap<>();
+            Iterator<S_CollectionID> ite = env.data.data.keySet().iterator();
+            while (ite.hasNext()) {
+                S_CollectionID cid = ite.next();
+                LocalDate date = env.data.cid2date.get(cid);
+                Integer year = date.getYear();
+                TreeMap<Integer, TreeMap<Integer, Integer>> nmd;
+                if (nymd.containsKey(year)) {
+                    nmd = nymd.get(year);
+                } else {
+                    nmd = new TreeMap<>();
+                    nymd.put(year, nmd);
+                }
+                Integer month = date.getMonthValue();
+                TreeMap<Integer, Integer> nd;
+                if (nmd.containsKey(month)) {
+                    nd = nmd.get(month);
+                } else {
+                    nd = new TreeMap<>();
+                    nmd.put(month, nd);
+                }
+                Integer day = date.getDayOfMonth();
+                S_Collection c = env.data.data.get(cid);
+                if (c == null) {
+                    c = env.data.getCollection(cid);
+                }
+                Iterator<S_ID_long> ite4 = c.data.keySet().iterator();
+                int n = 0;
+                while (ite4.hasNext()) {
+                    S_Record sr = c.data.get(ite4.next());
+                    //if (Objects.equals(sr.aRec.getLocal_Authority_District(), ladid)) {
+                        //if (sr.aRec.getAccident_Severity() == 1) {
+                        Iterator<S_Casualty_Record> ite5 = sr.cRecs.iterator();
+                        while (ite5.hasNext()) {
+                            if (ite5.next().getCasualty_Severity() == 1) {
+                                n += 1;
+                            }
+                        }
+                        //}
+                    //}
+                }
+                Generic_Collections.addToCount(nd, day, n);
+                env.env.log("date=" + date.toString() + ", n=" + n);
+            }
+            Generic_IO.writeObject(nymd, p);
+        }
+        printTable(name, nymd);
+    }
+
+    /**
+     * Output count of cyclist casualties (by year and month).
+     *
+     * @param ladid Local Authority District ID
+     * @param name0 Name for the Path.
+     * @throws IOException If encountered.
+     * @throws ClassNotFoundException If encountered.
+     */
+    public void outputCyclistByYearAndMonth(Short ladid, String name0) throws IOException,
+            ClassNotFoundException {
+        Byte vehicleType = 1;
+        String name = "Cyclist_casualties";
+        Path p = files.getNymd(name0, name);
+        TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>> nymd;
+        if (Files.exists(p)) {
+            nymd = (TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>>) Generic_IO.readObject(p);
+        } else {
+            Files.createDirectories(p.getParent());
+            nymd = new TreeMap<>();
+            Iterator<S_CollectionID> ite = env.data.data.keySet().iterator();
+            while (ite.hasNext()) {
+                S_CollectionID cid = ite.next();
+                LocalDate date = env.data.cid2date.get(cid);
+                Integer year = date.getYear();
+                TreeMap<Integer, TreeMap<Integer, Integer>> nmd;
+                if (nymd.containsKey(year)) {
+                    nmd = nymd.get(year);
+                } else {
+                    nmd = new TreeMap<>();
+                    nymd.put(year, nmd);
+                }
+                Integer month = date.getMonthValue();
+                TreeMap<Integer, Integer> nd;
+                if (nmd.containsKey(month)) {
+                    nd = nmd.get(month);
+                } else {
+                    nd = new TreeMap<>();
+                    nmd.put(month, nd);
+                }
+                Integer day = date.getDayOfMonth();
+                S_Collection c = env.data.data.get(cid);
+                if (c == null) {
+                    c = env.data.getCollection(cid);
+                }
+                Iterator<S_ID_long> ite4 = c.data.keySet().iterator();
+                int n = 0;
+                while (ite4.hasNext()) {
+                    n += getCasualtyCount(c.data.get(ite4.next()), vehicleType);
+                }
+                Generic_Collections.addToCount(nd, day, n);
+                env.env.log("date=" + date.toString() + ", n=" + n);
+            }
+            Generic_IO.writeObject(nymd, p);
+        }
+        printTable(name, nymd);
+    }
+
+/**
+     * Output count of cyclist casualties (by year and month).
+     *
+     * @param name0 Name for the Path.
+     * @throws IOException If encountered.
+     * @throws ClassNotFoundException If encountered.
+     */
+    public void outputCyclistByYearAndMonth(String name0) throws IOException,
+            ClassNotFoundException {
+        Byte vehicleType = 1;
+        String name = "Cyclist_casualties";
+        Path p = files.getNymd(name0, name);
+        TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>> nymd;
+        if (Files.exists(p)) {
+            nymd = (TreeMap<Integer, TreeMap<Integer, TreeMap<Integer, Integer>>>) Generic_IO.readObject(p);
+        } else {
+            Files.createDirectories(p.getParent());
+            nymd = new TreeMap<>();
+            Iterator<S_CollectionID> ite = env.data.data.keySet().iterator();
+            while (ite.hasNext()) {
+                S_CollectionID cid = ite.next();
+                LocalDate date = env.data.cid2date.get(cid);
+                Integer year = date.getYear();
+                TreeMap<Integer, TreeMap<Integer, Integer>> nmd;
+                if (nymd.containsKey(year)) {
+                    nmd = nymd.get(year);
+                } else {
+                    nmd = new TreeMap<>();
+                    nymd.put(year, nmd);
+                }
+                Integer month = date.getMonthValue();
+                TreeMap<Integer, Integer> nd;
+                if (nmd.containsKey(month)) {
+                    nd = nmd.get(month);
+                } else {
+                    nd = new TreeMap<>();
+                    nmd.put(month, nd);
+                }
+                Integer day = date.getDayOfMonth();
+                S_Collection c = env.data.data.get(cid);
+                if (c == null) {
+                    c = env.data.getCollection(cid);
+                }
+                Iterator<S_ID_long> ite4 = c.data.keySet().iterator();
+                int n = 0;
+                while (ite4.hasNext()) {
+                    n += getCasualtyCount(c.data.get(ite4.next()), vehicleType);
+                }
+                Generic_Collections.addToCount(nd, day, n);
+                env.env.log("date=" + date.toString() + ", n=" + n);
+            }
+            Generic_IO.writeObject(nymd, p);
+        }
+        printTable(name, nymd);
+    }
+
+    public int getCasualtyCount(S_Record sr, Byte vehicleType) {
+        int n = 0;
+        Iterator<S_Casualty_Record> ite = sr.cRecs.iterator();
+        while (ite.hasNext()) {
+            S_Casualty_Record cr = ite.next();
+            //if (cr.getCasualty_Severity() == 1) {
+            Short vid = cr.getVehicle_Reference();
+            Iterator<S_Vehicle_Record> ite6 = sr.vRecs.iterator();
+            while (ite6.hasNext()) {
+                S_Vehicle_Record vr = ite6.next();
+                if (Objects.equals(vr.getVehicle_Reference(), vid)) {
+                    if (Objects.equals(vr.getVehicle_Type(), vehicleType)) {
+                        n += 1;
+                    }
+                }
+            }
+        }
+        return n;
     }
 
     boolean doLoadData = false;

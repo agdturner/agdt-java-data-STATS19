@@ -72,10 +72,13 @@ public class S_Files extends Data_Files {
     }
     
     /**
+     * @param name0 Subset name.
+     * @param name Filename prefix.
      * @return A path for a file for storing the number of accidents in each 
      * year, month, day.
      */
-    public Path getNymd(String name) throws IOException{
-        return Paths.get(getGeneratedDir().toString(), name + "_nymd.dat");
+    public Path getNymd(String name0, String name) throws IOException{
+        return Paths.get(getGeneratedDir().toString(), "SummaryCounts", name0, 
+                name + "_nymd.dat");
     }
 }
