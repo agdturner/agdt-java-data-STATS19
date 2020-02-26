@@ -6,7 +6,7 @@ Java for processing STATS19 data in a reproducible way.
 
 ## Data
 STATS19 are individual level personal injury road accident data compiled and released annually by the UK Department for Transport. Data for Northern Ireland have been collected separately to that from Wales, Scotland and England. The data schema has remained very similar since 1985, but there have been a number of changes. Data from 1985 to 2014 are available as a series from the UKDA:
-beta.ukdataservice.ac.uk/datacatalogue/series/series?id=2000045
+https://beta.ukdataservice.ac.uk/datacatalogue/series/series?id=2000045
 Data from 2009 to 2018 is currently available from data.gov.uk via:
 https://data.gov.uk/dataset/cb7ae6f0-4be6-4935-9277-47e5ce24a11f/road-safety-data
 
