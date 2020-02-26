@@ -1,4 +1,7 @@
-# agdt-java-generic-data-stats19
+# agdt-java-data-STATS19
+
+https://github.com/agdturner/agdt-java-data-STATS19
+
 Java for processing STATS19 data in a reproducible way.
 
 ## Data
