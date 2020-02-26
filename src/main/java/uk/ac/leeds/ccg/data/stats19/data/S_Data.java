@@ -2051,7 +2051,7 @@ public class S_Data extends S_Object {
      * <li>1,Roundabout</li>
      * <li>2,One way street</li>
      * <li>3,Dual carriageway</li>
-     * <li>6, Single carriageway</li>
+     * <li>6,Single carriageway</li>
      * <li>7,Slip road</li>
      * <li>9,Unknown</li>
      * <li>12,One way street/Slip road</li>
@@ -2149,7 +2149,7 @@ public class S_Data extends S_Object {
     protected HashMap<Byte, String> jcid2jc;
 
     /**
-     * @return {@link #jdid2jd} initialised first if it is {@code null}.
+     * @return {@link #jcid2jc} initialised first if it is {@code null}.
      */
     public HashMap<Byte, String> getJcid2jc() {
         if (jcid2jc == null) {

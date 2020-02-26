@@ -24,7 +24,7 @@ import uk.ac.leeds.ccg.data.stats19.core.S_Strings;
 
 /**
  * S_Files
- * 
+ *
  * @author Andy Turner
  * @version 1.0.0
  */
@@ -39,7 +39,7 @@ public class S_Files extends Data_Files {
     public S_Files(Path dir) throws IOException {
         super(dir);
     }
-    
+
     public Path getGeneratedSubsetsDir() throws IOException {
         Path r = Paths.get(getGeneratedDir().toString(), S_Strings.s_Subsets);
         Files.createDirectories(r);
@@ -47,38 +47,44 @@ public class S_Files extends Data_Files {
     }
 
     /**
-     * @return A path to a file for storing the accident to accident id lookup. 
+     * @return A path to a file for storing the accident to accident id lookup.
      * @throws IOException If encountered.
      */
     public Path getAi2aiid() throws IOException {
         return Paths.get(getGeneratedDir().toString(), "ai2aiid.dat");
     }
-    
+
     /**
-     * @return A path to a file for storing the accident id to accident lookup. 
+     * @return A path to a file for storing the accident id to accident lookup.
      * @throws IOException If encountered.
      */
     public Path getAiid2ai() throws IOException {
         return Paths.get(getGeneratedDir().toString(), "aiid2ai.dat");
     }
-    
+
     /**
      * @return A path to a file for storing the accident id to collection id
-     * lookup. 
+     * lookup.
      * @throws IOException If encountered.
      */
     public Path getAiid2cid() throws IOException {
         return Paths.get(getGeneratedDir().toString(), "aiid2cid.dat");
     }
-    
+
     /**
-     * @param name0 Subset name.
-     * @param name Filename prefix.
-     * @return A path for a file for storing the number of accidents in each 
+     * @param subsetType A name for subsetType directory.
+     * @param name0 The subset name.
+     * @param name Filename prefix (the type of output).
+     * @return A path for a file for storing the number of accidents in each
      * year, month, day.
      */
-    public Path getNymd(String name0, String name) throws IOException{
-        return Paths.get(getGeneratedDir().toString(), "SummaryCounts", name0, 
-                name + "_nymd.dat");
+    public Path getNymd(String subsetType, String name0, String name) throws IOException {
+        if (subsetType.isBlank()) {
+            return Paths.get(getGeneratedDir().toString(), "SummaryCounts",
+                    name0, name + "_nymd.dat");
+        } else {
+            return Paths.get(getGeneratedDir().toString(), "SummaryCounts",
+                    subsetType, name0, name + "_nymd.dat");
+        }
     }
 }

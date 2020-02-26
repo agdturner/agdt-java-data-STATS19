@@ -33,6 +33,9 @@ public class S_Strings extends Generic_Strings {
     public static final String s_person = "person";
     public static final String s_Subsets = "Subsets";
     public static final String s_vehicle = "vehicle";
+    public static final String s_LAD = "LAD"; 
+    public static final String s_UrbanRural = "UrbanRural";
+    public static final String s_DayOfWeek = "DayOfWeek";
 
     public S_Strings() {
         super();
