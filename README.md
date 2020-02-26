@@ -29,7 +29,7 @@ The aim of this library is to provide easily reproducible generalisations and vi
 To use the library, you need to download the source data. Please contact the developer if you want help getting started.
 
 ## Preliminary results
-As shown in the fllowing tables, there appears to be a significant increase in the accident count, accident frequency, the death count, the death frequency, the cyclist casualty count and the the cyclist casualty count frequency in 2014 compared with previous years. The general trend is for the counts and frequencies to come down, but why was there an increase in 2014? The change in death frequency is particularly clear. Are these older people dying? Are the results localised? 
+As shown in the fllowing tables, there appears to be a significant increase in the accident count, accident frequency, the death count, the death frequency, the cyclist casualty count and the the cyclist casualty count frequency in 2014 compared with previous years. The general trend is for the counts and frequencies to come down, but why was there an increase in 2014? The change in death frequency is particularly clear. This could be in part a result of a the health system being under pressure as well as the roads becoming more dangerous. But whatever the reasons, it is worthy of further investigation Are the results localised? Are there particular types of people dying more? Are particular types of accident increasing in frequency or severity? 
 ```
 Accident count (by year and month)
 Year,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec
@@ -114,5 +114,9 @@ Year,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec
 2017,42.52,45.46,50.65,48.67,60.16,63.00,60.32,48.71,55.73,55.87,55.57,33.06
 2018,41.42,39.00,34.90,40.20,60.35,67.67,62.65,49.10,54.87,54.71,51.57,35.94
 ```
+
+This trend has been highlighted by others:
+See the end of this document:
+https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/437785/Testing_for_statistically_significant_changes.pdf
 
 The next steps are to break this down geographically and to present the results in graphs and geographical maps...
