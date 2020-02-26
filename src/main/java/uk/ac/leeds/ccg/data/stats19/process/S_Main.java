@@ -492,7 +492,6 @@ public class S_Main extends S_Object {
                 int n = 0;
                 while (ite4.hasNext()) {
                     S_Record sr = c.data.get(ite4.next());
-
                     if (Objects.equals(sr.aRec.getLocal_Authority_District(), ladid)) {
                         //if (sr.aRec.getAccident_Severity() == 1) {
                         Iterator<S_Casualty_Record> ite5 = sr.cRecs.iterator();
@@ -505,7 +504,7 @@ public class S_Main extends S_Object {
                     }
                 }
                 Generic_Collections.addToCount(nd, day, n);
-                env.env.log("date=" + date.toString() + ", n=" + n);
+                //env.env.log("date=" + date.toString() + ", n=" + n);
             }
             Generic_IO.writeObject(nymd, p);
         }
@@ -570,7 +569,7 @@ public class S_Main extends S_Object {
                     //}
                 }
                 Generic_Collections.addToCount(nd, day, n);
-                env.env.log("date=" + date.toString() + ", n=" + n);
+                //env.env.log("date=" + date.toString() + ", n=" + n);
             }
             Generic_IO.writeObject(nymd, p);
         }
@@ -624,10 +623,13 @@ public class S_Main extends S_Object {
                 Iterator<S_ID_long> ite4 = c.data.keySet().iterator();
                 int n = 0;
                 while (ite4.hasNext()) {
-                    n += getCasualtyCount(c.data.get(ite4.next()), vehicleType);
+                    S_Record sr = c.data.get(ite4.next());
+                    if (Objects.equals(sr.aRec.getLocal_Authority_District(), ladid)) {
+                        n += getCasualtyCount(sr, vehicleType);
+                    }
                 }
                 Generic_Collections.addToCount(nd, day, n);
-                env.env.log("date=" + date.toString() + ", n=" + n);
+                //env.env.log("date=" + date.toString() + ", n=" + n);
             }
             Generic_IO.writeObject(nymd, p);
         }
@@ -683,7 +685,7 @@ public class S_Main extends S_Object {
                     n += getCasualtyCount(c.data.get(ite4.next()), vehicleType);
                 }
                 Generic_Collections.addToCount(nd, day, n);
-                env.env.log("date=" + date.toString() + ", n=" + n);
+                //env.env.log("date=" + date.toString() + ", n=" + n);
             }
             Generic_IO.writeObject(nymd, p);
         }
